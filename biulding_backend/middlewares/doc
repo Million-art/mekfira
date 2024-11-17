@@ -1,0 +1,68 @@
+const { validate, parse } = require('@telegram-apps/init-data-node');
+
+// Create a bot instance using the bot token from environment variables or a hardcoded value for testing
+const token = process.env.BOT_TOKEN || '7007622708:AAFr6HY2YhQ1izrbQrbqJKjfqV26ZgSItVc';
+
+// Function to set init data in the response object
+function setInitData(res, initData) {
+  res.locals.initData = initData;
+}
+
+// Function to extract init data from the response object
+function getInitData(res) {
+  return res.locals.initData;
+}
+
+/**
+ * Middleware to authorize the Telegram Mini App client.
+ */
+const authMiddleware = (req, res, next) => {
+  const [authType, authData = ''] = (req.header('authorization') || '').split(' ');
+
+  console.log('Auth Type:', authType);
+  console.log('Auth Data:', authData);
+
+  // Check if authData is defined and valid
+  if (!authData) {
+    return next(new Error('Auth data is missing'));
+  }
+
+  switch (authType) {
+    case 'tma':
+      try {
+        console.log('Using token:', token);
+        const parsedData = parse(authData);  // Parse before validating
+        validate(authData, token, { expiresIn: 3600 });
+
+        setInitData(res, parsedData);
+        return next();
+      } catch (e) {
+        console.error('Validation Error:', e.message);
+        return next(e);
+      }
+    default:
+      return next(new Error('Unauthorized'));
+  }
+};
+
+// Middleware to show user init data
+const showInitDataMiddleware = (req, res, next) => {
+  const initData = getInitData(res);
+  if (!initData) {
+    return next(new Error('Cannot display init data as it was not found'));
+  }
+  res.json(initData);
+};
+
+// Middleware for error handling
+const defaultErrorMiddleware = (err, req, res) => {
+  res.status(500).json({
+    error: err.message,
+  });
+};
+
+module.exports = {
+  authMiddleware,
+  showInitDataMiddleware,
+  defaultErrorMiddleware,
+};
