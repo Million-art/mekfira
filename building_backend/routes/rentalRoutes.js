@@ -1,4 +1,3 @@
-// routes/rentalRoutes.js
 const express = require('express');
 const {
   addRental,
@@ -12,13 +11,13 @@ const {
 const router = express.Router();
 
 // Routes for rental operations
-router.post('/add', addRental);
-router.get('/', getRentals);
-router.get('/:id', getRentalById);
-router.patch('/:id', updateRental);
-router.delete('/:id', deleteRental);
+router.post('/add', addRental); // Add a rental
+router.get('/', getRentals); // Get all rentals
+router.get('/:id', getRentalById); // Get rental by ID
+router.patch('/:id', updateRental); // Update a rental by renterId
+router.delete('/:id', deleteRental); // Delete a rental by renterId
 
 // Route to notify about rentals ending soon
-router.get('/notify-endings', notifyRentalsEndingSoon);
+router.get('/notify-endings', notifyRentalsEndingSoon); // Notify for rentals ending soon
 
 module.exports = router;

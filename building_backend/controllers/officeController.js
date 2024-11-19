@@ -1,12 +1,13 @@
 const { validationResult } = require('express-validator');
 const Office = require('../models/officeModel');  // Assuming Office is the model for office data
 const sequelize = require('../database/connection'); // Assuming you're using Sequelize connection
+const Admin = require('../models/adminModel');
 
 const officeController = {
     // Get all available offices (offices that are not rented or under maintenance)
     getAllOffices: async (req, res, next) => {
         try {
-            const offices = await Office.findAll({ where: { status: 'Available' } });
+            const offices = await Office.findAll();
             res.json(offices);
         } catch (err) {
             next(err);
@@ -61,19 +62,31 @@ const officeController = {
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { officeNo, price, area, floorNo, status } = req.body;
-
         try {
+            const { officeNo, price, area, floorNo, status } = req.body;
+            const {adminId} = req.user
+            console.log("Aaaaaa",adminId)
+
+            // Validate if adminId exists in the Admin table
+            const admin = await Admin.findByPk(adminId);
+            if (!admin) {
+                return res.status(404).json({ message: 'Admin not found' });
+            }
+    
+            // Create new Office
             const newOffice = await Office.create({
                 officeNo,
                 price,
                 area,
                 floorNo,
-                status: status || 'Available',  // Default to 'Available' if no status provided
+                status,
+                adminId, // Ensure adminId is provided here
             });
-            res.status(201).json({ officeId: newOffice.officeId });
-        } catch (err) {
-            next(err);
+    
+            res.status(201).json({ message: 'Office created successfully', office: newOffice });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Failed to create office', error: error.message });
         }
     },
 

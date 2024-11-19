@@ -50,7 +50,7 @@ const SideBar: React.FC<SideBarProps> = ({ setActiveSection, onLogout }) => {
             className="flex items-center cursor-pointer hover:bg-gray-800 p-2 rounded transition-colors duration-200"
             onClick={() => handleMenuItemClick('addOffice')}
             role="button"
-            aria-label="Add a Task"
+            aria-label="Add a Office"
             tabIndex={0}
             onKeyPress={(e) => e.key === 'Enter' && handleMenuItemClick('addOffice')}
           >
@@ -61,12 +61,23 @@ const SideBar: React.FC<SideBarProps> = ({ setActiveSection, onLogout }) => {
             className="flex items-center cursor-pointer hover:bg-gray-800 p-2 rounded transition-colors duration-200"
             onClick={() => handleMenuItemClick('manageOffices')}
             role="button"
-            aria-label="Manage Tasks"
+            aria-label="Manage Office"
             tabIndex={0}
             onKeyPress={(e) => e.key === 'Enter' && handleMenuItemClick('manageOffices')}
           >
             <FaClipboardList className="h-6 w-6 mr-3" aria-hidden="true" />
             <span className="text-lg">Manage Office</span>
+          </li>
+          <li
+            className="flex items-center cursor-pointer hover:bg-gray-800 p-2 rounded transition-colors duration-200"
+            onClick={() => handleMenuItemClick('addRental')}
+            role="button"
+            aria-label="Add Rental"
+            tabIndex={0}
+            onKeyPress={(e) => e.key === 'Enter' && handleMenuItemClick('addRental')}
+          >
+            <FaPlus className="h-6 w-6 mr-3" aria-hidden="true" />
+            <span className="text-lg">Rent Office</span>
           </li>
           <li
             className="flex items-center cursor-pointer hover:bg-gray-800 p-2 rounded transition-colors duration-200"
@@ -79,17 +90,7 @@ const SideBar: React.FC<SideBarProps> = ({ setActiveSection, onLogout }) => {
             <FaUsers className="h-6 w-6 mr-3" aria-hidden="true" />
             <span className="text-lg">Manage Rents</span>
           </li>
-          <li
-            className="flex items-center cursor-pointer hover:bg-gray-800 p-2 rounded transition-colors duration-200"
-            onClick={() => handleMenuItemClick('withdrawals')}
-            role="button"
-            aria-label="Withdrawals"
-            tabIndex={0}
-            onKeyPress={(e) => e.key === 'Enter' && handleMenuItemClick('withdrawals')}
-          >
-            <FaDollarSign className="h-6 w-6 mr-3" aria-hidden="true" />
-            <span className="text-lg">Withdrawals</span>
-          </li>
+
         </ul>
         <footer className="mt-auto">
           <button

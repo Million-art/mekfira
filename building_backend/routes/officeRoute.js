@@ -1,6 +1,7 @@
 const express = require('express');
 const officeRoutes = express.Router();
 const OfficeController = require('../controllers/officeController');  // Import the updated Office controller
+const { authStatus } = require('../middlewares/authStatus');
 
 // Define routes for office management
 
@@ -11,7 +12,7 @@ officeRoutes.get('/all', OfficeController.getAllOffices);
 officeRoutes.get('/one/:id', OfficeController.getOfficeById);
 
 // Add a new office
-officeRoutes.post('/add', OfficeController.addOffice);
+officeRoutes.post('/add', authStatus, OfficeController.addOffice);
 
 // Edit office details by ID
 officeRoutes.put('/edit/:id', OfficeController.updateOffice);

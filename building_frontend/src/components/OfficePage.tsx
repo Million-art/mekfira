@@ -1,35 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Office } from '../type'; // Adjusted to use 'Office' instead of 'Task'
+import { Office } from '../type';
 import api from '@/api/api';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import OfficeList from './OfficeList'; // Assuming you will have an OfficeList component
-import EditOffice from './EditOffice'; // Assuming you will have an EditOffice component
+import OfficeList from './OfficeList';
+import EditOffice from './EditOffice';
 
 interface OfficePageProps {
-  offices: Office[];              // Adjusted to use 'Office[]' instead of 'Task[]'
-  deleteOffice: (officeId: string) => Promise<void>; // Adjusted to use office
+  offices: Office[];
+  deleteOffice: (officeId: string) => Promise<void>;
 }
 
 const OfficePage: React.FC<OfficePageProps> = ({ offices, deleteOffice }) => {
-  const [filteredOffices, setFilteredOffices] = useState<Office[]>(offices); // Adjusted for 'Office' type
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [editingOffice, setEditingOffice] = useState<Office | null>(null); // Adjusted to 'Office'
+  const [filteredOffices, setFilteredOffices] = useState<Office[]>(offices);
+  const [selectedStatus, setSelectedStatus] = useState<string>('all'); // Added status filter
+  const [editingOffice, setEditingOffice] = useState<Office | null>(null);
 
   useEffect(() => {
-    const filtered = offices.filter(office =>
-      office.area?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      office.price.toString().includes(searchQuery) // Assuming price is searchable as a string
-    );
-    setFilteredOffices(filtered);
-  }, [searchQuery, offices]);
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
+    if (selectedStatus === 'all') {
+      setFilteredOffices(offices);
+    } else {
+      setFilteredOffices(offices.filter(office => office?.status === selectedStatus));
+    }
+  }, [selectedStatus, offices]);
 
   const handleEditOffice = (office: Office) => {
-    setEditingOffice(office); // Handle editing of office
+    setEditingOffice(office);
   };
 
   const handleCancelEdit = () => {
@@ -44,6 +40,7 @@ const OfficePage: React.FC<OfficePageProps> = ({ offices, deleteOffice }) => {
           prevOffices.map(office => (office.officeId === updatedOffice.officeId ? updatedOffice : office))
         );
         setEditingOffice(null);
+        toast.success('Office updated successfully.');
       } else {
         toast.error('Failed to update office. Please try again.');
       }
@@ -56,14 +53,20 @@ const OfficePage: React.FC<OfficePageProps> = ({ offices, deleteOffice }) => {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Office Management</h1>
+
+      {/* Status Filter */}
       <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Search offices..."
-          value={searchQuery}
-          onChange={handleSearchChange}
-          className="border p-2 w-full"
-        />
+        <label className="mr-2 font-medium">Filter by Status:</label>
+        <select
+          className="border rounded px-2 py-1"
+          value={selectedStatus}
+          onChange={e => setSelectedStatus(e.target.value)}
+        >
+          <option value="all">All</option>
+          <option value="Available">Available</option>
+          <option value="Rented">Rented</option>
+          <option value="UnderMaintenance">Under Maintenance</option>
+        </select>
       </div>
 
       {editingOffice ? (

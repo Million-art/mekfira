@@ -27,8 +27,26 @@ const Office = sequelize.define('Office', {
         type: DataTypes.ENUM('Available', 'Rented', 'UnderMaintenance'),
         allowNull: false,
     },
+    adminId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+            model: 'admins',
+            key: 'id',
+        },
+        onDelete: 'CASCADE',
+    },
+    tenantId: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        references: {
+            model: 'rentals',
+            key: 'rentalId',
+        },
+        onDelete: 'SET NULL',
+    },
 }, {
-    tableName: 'offices', // Ensure correct table name (case-sensitive)
+    tableName: 'offices',
     timestamps: true,
 });
 

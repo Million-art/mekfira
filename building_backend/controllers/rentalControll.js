@@ -1,22 +1,25 @@
 const Rental = require('../models/rentalModel');
 const sendNotificationEmail = require('../services/nodemailerService');
 const { Op } = require('sequelize');
+const Office = require('../models/officeModel'); // Office model for reference
 
 // Controller to add a rental
 const addRental = async (req, res, next) => {
-  const { officeNo, floorNo, officeName, tenantName, startDate, endDate, rentalAmount, tenantEmail } = req.body;
+  const { renterName, renterPhone, rentedOfficeId, adminId } = req.body;
 
   try {
+    // Check if the office and admin exist
+    const office = await Office.findByPk(rentedOfficeId);
+    if (!office) {
+      return res.status(404).json({ message: 'Office not found' });
+    }
+
     // Create a new rental record
     const rental = await Rental.create({
-      officeNo,
-      floorNo,
-      officeName,
-      tenantName,
-      startDate,
-      endDate,
-      rentalAmount,
-      tenantEmail,
+      renterName,
+      renterPhone,
+      rentedOfficeId,
+      adminId,
     });
 
     res.status(201).json(rental);
@@ -28,7 +31,14 @@ const addRental = async (req, res, next) => {
 // Controller to get all rentals
 const getRentals = async (req, res, next) => {
   try {
-    const rentals = await Rental.findAll();
+    const rentals = await Rental.findAll({
+      include: [
+        {
+          model: Office,
+          as: 'rentedOffice', // The alias for Office model association
+        },
+      ],
+    });
     res.status(200).json(rentals);
   } catch (error) {
     next(error);
@@ -40,7 +50,14 @@ const getRentalById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const rental = await Rental.findByPk(id);
+    const rental = await Rental.findByPk(id, {
+      include: [
+        {
+          model: Office,
+          as: 'rentedOffice', // Include office information
+        },
+      ],
+    });
     if (!rental) {
       return res.status(404).json({ message: 'Rental not found' });
     }
@@ -56,7 +73,7 @@ const updateRental = async (req, res, next) => {
   const rentalData = req.body;
 
   try {
-    const [updated] = await Rental.update(rentalData, { where: { id } });
+    const [updated] = await Rental.update(rentalData, { where: { renterId: id } });
 
     if (updated) {
       const updatedRental = await Rental.findByPk(id);
@@ -74,7 +91,7 @@ const deleteRental = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const deleted = await Rental.destroy({ where: { id } });
+    const deleted = await Rental.destroy({ where: { renterId: id } });
 
     if (deleted) {
       return res.status(204).json({ message: 'Rental deleted' });
@@ -100,15 +117,21 @@ const notifyRentalsEndingSoon = async (req, res, next) => {
           [Op.lte]: endOfWeek,
         },
       },
+      include: [
+        {
+          model: Office,
+          as: 'rentedOffice', // Include office information
+        },
+      ],
     });
 
     if (rentals.length > 0) {
       for (const rental of rentals) {
         try {
           // Send the notification email for each rental ending soon
-          await sendNotificationEmail(rental.tenantEmail, rental.officeName, rental.endDate);
+          await sendNotificationEmail(rental.renterEmail, rental.rentedOffice.officeName, rental.endDate);
         } catch (emailError) {
-          console.error(`Failed to send email to tenant for rental ${rental.id}:`, emailError);
+          console.error(`Failed to send email to tenant for rental ${rental.renterId}:`, emailError);
           // Optional: log specific error for email failure if needed
         }
       }

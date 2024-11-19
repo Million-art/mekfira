@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/connection');
- 
+
 const Admin = sequelize.define('Admin', {
     id: {
         type: DataTypes.UUID,
@@ -11,9 +11,6 @@ const Admin = sequelize.define('Admin', {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
-        validate: {
-            isEmail: true,
-        },
     },
     password: {
         type: DataTypes.STRING,
@@ -23,5 +20,5 @@ const Admin = sequelize.define('Admin', {
     tableName: 'admins',
     timestamps: true,
 });
- 
+
 module.exports = Admin;

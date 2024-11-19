@@ -13,7 +13,7 @@ const UserPage: React.FC<UserPageProps> = ({ users, deleteUser }) => {
     }
 console.log('aaaaaaaa',users)
     return (
-        <div>
+        <div>jhkhk
             <h1 className="text-3xl font-bold mb-6">User Management</h1>
             <p className="mb-4">There are <b className='3xl'>{users.length}</b> users</p>
             <UserList users={users} deleteUser={deleteUser} />

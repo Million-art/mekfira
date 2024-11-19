@@ -3,7 +3,6 @@ const express = require('express');
 const { body } = require('express-validator');
 const adminController = require('../controllers/adminController');
 const router = express.Router();
-const loginRateLimiter = require('../middlewares/rateLimiter'); // Make sure to import your rate limiter
 const { authStatus } = require('../middlewares/authStatus');
 
 // Validation for login
@@ -41,7 +40,7 @@ router.get('/:id', adminController.getAdminById);
 router.delete('/:id', adminController.deleteAdmin);
 
 // Route to log in an admin
-router.post('/login', loginRateLimiter, loginValidation, adminController.loginAdmin);
+router.post('/login', loginValidation, adminController.loginAdmin);
 
 // Route to refresh access token
 router.post('/refresh-token', adminController.refreshToken);

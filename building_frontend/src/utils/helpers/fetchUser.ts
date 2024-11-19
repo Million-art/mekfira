@@ -6,7 +6,6 @@ const fetchUsers = async ({setUsers,activeSection}:{setUsers: (users: User[]) =>
         try {
             const response = await api.get(`api/users/all`);
             setUsers(response.data); // Make sure response.data matches the User type
-            console.log('resssssss',response)
         } catch (error) {
             console.error('Error fetching users:', error);
         }

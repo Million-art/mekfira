@@ -8,6 +8,8 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,  // Important for sending cookies with requests
+
 });
 
 // Export the Axios instance to be used in other files

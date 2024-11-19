@@ -93,13 +93,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 const response = await api.get('api/admin/auth-status', {
                     withCredentials: true,
                 });
-                if (response.status === 200) {
+                console.log('Authentication response:', response); // Add logging here
+                if (response.status === 200 && response.data.user) {
                     const loggedInUser: User = {
                         id: response.data.user.id,
                         email: response.data.user.email,
                     };
                     setUser(loggedInUser);
                     setIsAuthenticated(true);
+                } else {
+                    setIsAuthenticated(false);
+                    setUser(null);
                 }
             } catch (error) {
                 setUser(null);
@@ -110,6 +114,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 setIsLoading(false); // Loading complete
             }
         };
+        
 
         checkAuthStatus();
     }, []);
