@@ -1,31 +1,27 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../database/connection'); // Ensure the path is correct
-
+const sequelize = require('../database/connection');
+ 
 const Admin = sequelize.define('Admin', {
     id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
-
     email: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true, // Ensure emails are unique
+        unique: true,
         validate: {
-            isEmail: true, // Validate that the email is in the correct format
+            isEmail: true,
         },
     },
     password: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-
 }, {
-    tableName: 'admins', // Specify a table name for clarity
-    timestamps: true, // Sequelize will automatically manage createdAt and updatedAt
+    tableName: 'admins',
+    timestamps: true,
 });
-
-
-
+ 
 module.exports = Admin;

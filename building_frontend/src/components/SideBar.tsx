@@ -1,48 +1,109 @@
-import React, { useState, useEffect } from 'react';
-import OfficeForm from './OfficeForm';
-import OfficePage from './OfficePage';
-import { DashboardProps, Office } from '../type'; // Adjust the path based on your project structure
-import fetchOffices from '../utils/helpers/fetchOffices';
-import MyChart from './MyChart';
+// src/components/SideBar.tsx
+import React, { useState } from 'react';
+import { ActiveSection } from '../type'; // Adjust the import path as necessary
+import { FaHome, FaPlus, FaClipboardList, FaUsers, FaDollarSign, FaSignOutAlt, FaBars } from 'react-icons/fa'; // Font Awesome icons
 
-import api from '../api/api';
+interface SideBarProps {
+  setActiveSection: (section: ActiveSection) => void; // Function to change the active section
+  onLogout: () => void; // Function to handle logout
+}
 
-const Dashboard: React.FC<DashboardProps> = ({ activeSection }) => {
-    const [offices, setOffices] = useState<Office[]>([]);
+const SideBar: React.FC<SideBarProps> = ({ setActiveSection, onLogout }) => {
+  const [isOpen, setIsOpen] = useState(false); // State to manage drawer visibility
 
-    // Fetch offices whenever the activeSection changes
-    useEffect(() => {
-        fetchOffices({ setOffices, activeSection });
-    }, [activeSection]);
+  const toggleDrawer = () => {
+    setIsOpen(!isOpen); // Toggle the drawer open/close
+  };
 
-    // Add a new office to the list
-    const addOffice = (office: Office) => {
-        setOffices(prevOffices => [...prevOffices, office]);
-    };
+  const handleMenuItemClick = (section: ActiveSection) => {
+    setActiveSection(section); // Set the active section
+    setIsOpen(false); // Close the drawer after selecting a menu item
+  };
 
-    // Delete an office by its officeId
-    const deleteOffice = async (officeId: string) => {
-        try {
-            await api.delete(`api/offices/delete/${officeId}`);
-            // Remove the office from the state after successful deletion
-            setOffices(prevOffices => prevOffices.filter(office => office.officeId !== officeId));
-        } catch (error) {
-            console.error('Error deleting office:', error);
-        }
-    };
+  return (
+    <>
+      {/* Toggle Button for Mobile View */}
+      <button 
+        className="md:hidden p-2 bg-dark-blue text-white z-50 absolute top-5 right-2" 
+        onClick={toggleDrawer}
+        aria-label="Toggle Menu"
+      >
+        <FaBars className="h-6 w-6" />
+      </button>
+      
+      {/* Sidebar Drawer */}
+      <div className={`bg-dark-blue text-white w-full md:w-64 p-6 z-40 flex flex-col md:static fixed top-0 left-0 h-full transition-transform transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+        <h2 className="text-2xl font-bold mb-8 text-center ">Mekfira commercial center </h2>
+        <ul className="flex-grow space-y-4">
+          <li
+            className="flex items-center cursor-pointer hover:bg-gray-800 p-2 rounded transition-colors duration-200"
+            onClick={() => handleMenuItemClick('dashboard')}
+            role="button"
+            aria-label="Go to Dashboard"
+            tabIndex={0}
+            onKeyPress={(e) => e.key === 'Enter' && handleMenuItemClick('dashboard')}
+          >
+            <FaHome className="h-6 w-6 mr-3" aria-hidden="true" />
+            <span className="text-lg">Dashboard</span>
+          </li>
+          <li
+            className="flex items-center cursor-pointer hover:bg-gray-800 p-2 rounded transition-colors duration-200"
+            onClick={() => handleMenuItemClick('addOffice')}
+            role="button"
+            aria-label="Add a Task"
+            tabIndex={0}
+            onKeyPress={(e) => e.key === 'Enter' && handleMenuItemClick('addOffice')}
+          >
+            <FaPlus className="h-6 w-6 mr-3" aria-hidden="true" />
+            <span className="text-lg">Add Office</span>
+          </li>
+          <li
+            className="flex items-center cursor-pointer hover:bg-gray-800 p-2 rounded transition-colors duration-200"
+            onClick={() => handleMenuItemClick('manageOffices')}
+            role="button"
+            aria-label="Manage Tasks"
+            tabIndex={0}
+            onKeyPress={(e) => e.key === 'Enter' && handleMenuItemClick('manageOffices')}
+          >
+            <FaClipboardList className="h-6 w-6 mr-3" aria-hidden="true" />
+            <span className="text-lg">Manage Office</span>
+          </li>
+          <li
+            className="flex items-center cursor-pointer hover:bg-gray-800 p-2 rounded transition-colors duration-200"
+            onClick={() => handleMenuItemClick('manageUsers')}
+            role="button"
+            aria-label="Manage Users"
+            tabIndex={0}
+            onKeyPress={(e) => e.key === 'Enter' && handleMenuItemClick('manageUsers')}
+          >
+            <FaUsers className="h-6 w-6 mr-3" aria-hidden="true" />
+            <span className="text-lg">Manage Rents</span>
+          </li>
+          <li
+            className="flex items-center cursor-pointer hover:bg-gray-800 p-2 rounded transition-colors duration-200"
+            onClick={() => handleMenuItemClick('withdrawals')}
+            role="button"
+            aria-label="Withdrawals"
+            tabIndex={0}
+            onKeyPress={(e) => e.key === 'Enter' && handleMenuItemClick('withdrawals')}
+          >
+            <FaDollarSign className="h-6 w-6 mr-3" aria-hidden="true" />
+            <span className="text-lg">Withdrawals</span>
+          </li>
+        </ul>
+        <footer className="mt-auto">
+          <button
+            className="flex items-center mt-4 text-red-500 hover:text-red-400 transition-colors duration-200 text-lg"
+            onClick={onLogout}
+            aria-label="Log Out"
+          >
+            <FaSignOutAlt className="h-5 w-5 mr-2" aria-hidden="true" />
+            Log Out
+          </button>
+        </footer>
+      </div>
+    </>
+  );
+}
 
-    return (
-        <div className="p-6 flex-1 overflow-y-auto">
-            {/* Render chart if the active section is 'dashboard' */}
-            {activeSection === 'dashboard' && <div className='h-[100%]'><MyChart /></div>}
-
-            {/* Render the office form to add an office if the active section is 'addOffice' */}
-            {activeSection === 'addOffice' && <OfficeForm addOffice={addOffice} />}
-
-            {/* Render the list of offices with delete functionality if the active section is 'manageOffices' */}
-            {activeSection === 'manageOffices' && <OfficePage offices={offices} deleteOffice={deleteOffice} />}
-        </div>
-    );
-};
-
-export default Dashboard;
+export default SideBar;

@@ -4,7 +4,7 @@ const { body } = require('express-validator');
 const adminController = require('../controllers/adminController');
 const router = express.Router();
 const loginRateLimiter = require('../middlewares/rateLimiter'); // Make sure to import your rate limiter
-const { authStatus } = require('../middlewares/authMiddleware');
+const { authStatus } = require('../middlewares/authStatus');
 
 // Validation for login
 const loginValidation = [

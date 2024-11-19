@@ -1,11 +1,9 @@
 const jwt = require('jsonwebtoken');
-
 require('dotenv').config();
-  
+
 /**
  * Middleware to authorize the Telegram Mini App client.
  */
- 
 const authStatus = (req, res, next) => {
     const accessToken = req.cookies.accessToken;
 
@@ -23,15 +21,16 @@ const authStatus = (req, res, next) => {
     try {
         // Verify the access token
         const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
-        console.log('decoded', decoded);
-        // Return user data for authenticated admin
-        return res.status(200).json({
-            isAuthenticated: true,
-            user: {
-                id: decoded.id,
-                email: decoded.email,
-            },
-        });
+        console.log('Decoded token:', decoded);
+
+        // Attach user data to the request object so that subsequent handlers can access it
+        req.user = {
+            id: decoded.id,
+            email: decoded.email,
+        };
+
+        // Continue to the next middleware or route handler
+        next();
     } catch (error) {
         // Log the error for debugging
         console.error('Token verification error:', error.message);
@@ -44,4 +43,4 @@ const authStatus = (req, res, next) => {
     }
 }
 
-module.exports = {  authStatus };
+module.exports = { authStatus };

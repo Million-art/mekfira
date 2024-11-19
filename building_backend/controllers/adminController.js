@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const Admin = require('../models/admin');
+const Admin = require('../models/Admin');
 const { validationResult } = require('express-validator');
 
 const adminController = {
@@ -52,24 +52,34 @@ const adminController = {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
-        const { password, ...adminData } = req.body;
+    
+        const { email, password } = req.body;
         if (!password) {
             return res.status(400).json({ message: "Password is required" });
         }
-
+    
         try {
+            // Check if an admin with the same email already exists
+            const existingAdmin = await Admin.findOne({ where: { email } });
+            if (existingAdmin) {
+                return res.status(400).json({ message: "Email is already in use" });
+            }
+    
+            // Hash the password before saving it
             const hashedPassword = await bcrypt.hash(password, 10);
+    
+            // Create the new admin
             const newAdmin = await Admin.create({
-                ...adminData,
+                email,
                 password: hashedPassword,
             });
-
+    
             res.status(201).json({ adminId: newAdmin.id });
         } catch (err) {
             next(err);
         }
     },
+    
 
     // Login admin and issue tokens
     loginAdmin: async (req, res, next) => {

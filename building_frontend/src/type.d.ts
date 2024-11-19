@@ -7,6 +7,7 @@ export enum OfficeStatus {
 // Define a separate type for errors (strings for validation messages)
 export type OfficeError = {
     officeId: string;
+    officeNo:string;
     price: string;
     area: string;
     floorNo: string;
@@ -16,6 +17,7 @@ export type OfficeError = {
 // Define the structure for an office
 export interface Office {
     officeId: string;          // Unique identifier for the office
+    officeNo:string;
     price: number;             // Price of the office
     area: string;              // Area of the office (e.g., size in square meters)
     floorNo: number;           // Floor number the office is on

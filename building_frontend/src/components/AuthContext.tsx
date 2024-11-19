@@ -59,6 +59,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 console.log("Is Authenticated:", true); // Log after state is set
                 return loggedInUser; // Return user object on success
             }
+            
         } catch (error) {
             console.error("Login failed", error);
             return null; // Return null on failure

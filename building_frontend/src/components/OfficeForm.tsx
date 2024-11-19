@@ -4,18 +4,19 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Office, OfficeError } from '../type';
 import api from '../api/api';
 
-
 const OfficeForm: React.FC<{ addOffice: (office: Office) => void }> = ({ addOffice }) => {
     const [office, setOffice] = useState<Office>({
-        officeId: '',
+        officeId: '',  // This will not be used in the form
+        officeNo: '',
         price: 0,
         area: '',
         floorNo: 0,
-        status: 'Available',   
+        status: 'Available',
     });
 
     const [errors, setErrors] = useState<OfficeError>({
         officeId: '',
+        officeNo: '',
         price: '',
         area: '',
         floorNo: '',
@@ -35,15 +36,16 @@ const OfficeForm: React.FC<{ addOffice: (office: Office) => void }> = ({ addOffi
     const validate = (): OfficeError => {
         const validationErrors: OfficeError = {
             officeId: '',
+            officeNo: '',
             price: '',
             area: '',
             floorNo: '',
             status: '',
         };
 
-        // Validate officeId
-        if (!office.officeId.trim()) {
-            validationErrors.officeId = 'Office ID is required.';
+        // Validate officeNo (it should not be empty)
+        if (!office.officeNo.trim()) {
+            validationErrors.officeNo = 'Office Number is required.';
         }
 
         // Validate price (it should be greater than 0)
@@ -85,7 +87,8 @@ const OfficeForm: React.FC<{ addOffice: (office: Office) => void }> = ({ addOffi
                 addOffice(response.data);  // Add the new office to the list
                 // Reset the form after successful submission
                 setOffice({
-                    officeId: '',
+                    officeId: '',  // Reset officeId to an empty string
+                    officeNo: '',
                     price: 0,
                     area: '',
                     floorNo: 0,
@@ -93,6 +96,7 @@ const OfficeForm: React.FC<{ addOffice: (office: Office) => void }> = ({ addOffi
                 });
                 setErrors({
                     officeId: '',
+                    officeNo: '',
                     price: '',
                     area: '',
                     floorNo: '',
@@ -117,6 +121,7 @@ const OfficeForm: React.FC<{ addOffice: (office: Office) => void }> = ({ addOffi
             } else {
                 setErrors({
                     officeId: 'An unexpected error occurred. Please try again later.',
+                    officeNo: '',
                     price: '',
                     area: '',
                     floorNo: '',
@@ -133,61 +138,87 @@ const OfficeForm: React.FC<{ addOffice: (office: Office) => void }> = ({ addOffi
         <div>
             <h1 className='text-3xl font-bold mb-6'>Add Office</h1>
             <form onSubmit={handleSubmit} className="mb-6">
-                {errors.officeId && <p className="text-red-500">{errors.officeId}</p>}
-                <input
-                    name="officeId"
-                    type="text"
-                    placeholder="Office ID"
-                    value={office.officeId}
-                    onChange={handleChange}
-                    className={`border p-2 mb-4 w-full ${errors.officeId ? 'border-red-500' : ''}`}
-                    aria-describedby="officeIdError"
-                />
-                {errors.price && <p className="text-red-500" id="priceError">{errors.price}</p>}
-                <input
-                    name="price"
-                    type="number"
-                    placeholder="Price"
-                    value={office.price}
-                    onChange={handleChange}
-                    className={`border p-2 mb-4 w-full ${errors.price ? 'border-red-500' : ''}`}
-                    aria-describedby="priceError"
-                />
+                {/* Office Number */}
+                {errors.officeNo && <p className="text-red-500">{errors.officeNo}</p>}
+                <div className="mb-4">
+                    <label htmlFor="officeNo" className="block text-sm font-medium text-gray-700">Office Number</label>
+                    <input
+                        name="officeNo"
+                        type="text"
+                        id="officeNo"
+                        placeholder="Office Number"
+                        value={office.officeNo}
+                        onChange={handleChange}
+                        className={`border p-2 w-full ${errors.officeNo ? 'border-red-500' : ''}`}
+                        aria-describedby="officeNoError"
+                    />
+                </div>
 
-                {errors.area && <p className="text-red-500" id="areaError">{errors.area}</p>}
-                <input
-                    name="area"
-                    type="text"
-                    placeholder="Area"
-                    value={office.area}
-                    onChange={handleChange}
-                    className={`border p-2 mb-4 w-full ${errors.area ? 'border-red-500' : ''}`}
-                    aria-describedby="areaError"
-                />
+                {/* Price */}
+                {errors.price && <p className="text-red-500">{errors.price}</p>}
+                <div className="mb-4">
+                    <label htmlFor="price" className="block text-sm font-medium text-gray-700">Price</label>
+                    <input
+                        name="price"
+                        type="number"
+                        id="price"
+                        placeholder="Price"
+                        value={office.price}
+                        onChange={handleChange}
+                        className={`border p-2 w-full ${errors.price ? 'border-red-500' : ''}`}
+                        aria-describedby="priceError"
+                    />
+                </div>
 
-                {errors.floorNo && <p className="text-red-500" id="floorNoError">{errors.floorNo}</p>}
-                <input
-                    name="floorNo"
-                    type="number"
-                    placeholder="Floor Number"
-                    value={office.floorNo}
-                    onChange={handleChange}
-                    className={`border p-2 mb-4 w-full ${errors.floorNo ? 'border-red-500' : ''}`}
-                    aria-describedby="floorNoError"
-                />
+                {/* Area */}
+                {errors.area && <p className="text-red-500">{errors.area}</p>}
+                <div className="mb-4">
+                    <label htmlFor="area" className="block text-sm font-medium text-gray-700">Area</label>
+                    <input
+                        name="area"
+                        type="text"
+                        id="area"
+                        placeholder="Area"
+                        value={office.area}
+                        onChange={handleChange}
+                        className={`border p-2 w-full ${errors.area ? 'border-red-500' : ''}`}
+                        aria-describedby="areaError"
+                    />
+                </div>
 
-                {errors.status && <p className="text-red-500" id="statusError">{errors.status}</p>}
-                <select
-                    name="status"
-                    value={office.status}
-                    onChange={handleChange}
-                    className={`border p-2 mb-4 w-full ${errors.status ? 'border-red-500' : ''}`}
-                    aria-describedby="statusError"
-                >
-                    <option value={'Available'}>Available</option>
-                    <option value={'Rented'}>Rented</option>
-                    <option value={'UnderMaintenance'}>Under Maintenance</option>
-                </select>
+                {/* Floor Number */}
+                {errors.floorNo && <p className="text-red-500">{errors.floorNo}</p>}
+                <div className="mb-4">
+                    <label htmlFor="floorNo" className="block text-sm font-medium text-gray-700">Floor Number</label>
+                    <input
+                        name="floorNo"
+                        type="number"
+                        id="floorNo"
+                        placeholder="Floor Number"
+                        value={office.floorNo}
+                        onChange={handleChange}
+                        className={`border p-2 w-full ${errors.floorNo ? 'border-red-500' : ''}`}
+                        aria-describedby="floorNoError"
+                    />
+                </div>
+
+                {/* Status */}
+                {errors.status && <p className="text-red-500">{errors.status}</p>}
+                <div className="mb-4">
+                    <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
+                    <select
+                        name="status"
+                        id="status"
+                        value={office.status}
+                        onChange={handleChange}
+                        className={`border p-2 w-full ${errors.status ? 'border-red-500' : ''}`}
+                        aria-describedby="statusError"
+                    >
+                        <option value={'Available'}>Available</option>
+                        <option value={'Rented'}>Rented</option>
+                        <option value={'UnderMaintenance'}>Under Maintenance</option>
+                    </select>
+                </div>
 
                 <button type="submit" className="bg-blue-500 text-white px-4 py-2" disabled={loading}>
                     {loading ? 'Adding...' : 'Add Office'}
