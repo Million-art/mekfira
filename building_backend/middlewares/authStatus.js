@@ -1,9 +1,7 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-/**
- * Middleware to authorize the Telegram Mini App client.
- */
+ // Middleware to verify and attach user data to the request object
 const authStatus = (req, res, next) => {
     const accessToken = req.cookies.accessToken;
 
@@ -20,7 +18,7 @@ const authStatus = (req, res, next) => {
 
     try {
         // Verify the access token
-        const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
+        const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
         console.log('Decoded token:', decoded);
 
         // Attach user data to the request object so that subsequent handlers can access it

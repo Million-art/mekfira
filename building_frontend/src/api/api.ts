@@ -1,16 +1,12 @@
-// src/api/api.tsx
 import axios from 'axios';
-import { BaseUrl } from '../constant/baseUrl'; // Adjust the path if needed
 
-// Create an Axios instance with the base URL
 const api = axios.create({
-  baseURL: BaseUrl, // Now this will resolve to the proxy
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true,  // Important for sending cookies with requests
-
+  baseURL: 'http://localhost:3001',
+  withCredentials: true,  // Important for sending cookies
 });
 
-// Export the Axios instance to be used in other files
+// Add a response interceptor to handle token expiration and refresh
+api.interceptors.response.use( 
+);
+
 export default api;

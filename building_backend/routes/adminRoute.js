@@ -26,12 +26,12 @@ const addAdminValidation = [
         .matches(/\d/)
         .withMessage('Password must contain a number'),
 ];
-// Route to check auth status
-router.get('/auth-status', authStatus, (req, res) => {
-    res.send('This is a protected route');
+router.get('/auth/check', authStatus,()=>{
+    // Admin is authenticated, do something here
+    console.log('Admin is authenticated');
 });
 // Route to get all admins
-router.get('/', adminController.getAllAdmins);
+router.get('/all', adminController.getAllAdmins);
 
 // Route to get an admin by ID
 router.get('/:id', adminController.getAdminById);
@@ -43,14 +43,14 @@ router.delete('/:id', adminController.deleteAdmin);
 router.post('/login', loginValidation, adminController.loginAdmin);
 
 // Route to refresh access token
-router.post('/refresh-token', adminController.refreshToken);
-
-
+router.post('/refresh-token', adminController.accessTokenGenerator);
 
 // Route to add an admin
 router.post('/add-admin', addAdminValidation, adminController.addAdmin);
 
 // Route to log out an admin
 router.post('/logout', adminController.logoutAdmin);
+
+
 
 module.exports = router;

@@ -6,12 +6,11 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     const { isAuthenticated, isLoading } = useAuth();
   
     useEffect(() => {
-        console.log("Is   Authenticated:", isAuthenticated); // Log when the state changes
-    }, [isAuthenticated]); // Dependency array ensures this runs on changes
+        console.log("Is Authenticated:", isAuthenticated); // Log when the state changes
+    }, [isAuthenticated]); 
 
-    // Handle loading state
     if (isLoading) {
-        return <div>Loading...</div>; // Show a loading indicator
+        return <div>Loading...</div>; // Show loading indicator until authentication check completes
     }
 
     return isAuthenticated ? (

@@ -94,7 +94,7 @@ const adminController = {
         }
 
         const { email, password } = req.body;
-        try {
+         try {
             const admin = await Admin.findOne({ where: { email } });
             if (!admin) {
                 return res.status(401).json({ message: 'Invalid email or password' });
@@ -109,8 +109,7 @@ const adminController = {
             const accessToken = jwt.sign({ id: admin.id, email: admin.email }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
             const refreshToken = jwt.sign({ id: admin.id, email: admin.email }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
 
-            // Store refresh token in the database
-            admin.refreshToken = refreshToken;
+ 
             await admin.save();
 
             // Get the secure and SameSite cookie settings based on environment
@@ -128,40 +127,40 @@ const adminController = {
         }
     },
 
-    // Refresh access token
-    refreshToken: async (req, res, next) => {
-        const refreshToken = req.cookies.refreshToken;
-        if (!refreshToken) return res.sendStatus(401);
-
+  accessTokenGenerator :async (req, res) => {
+        const cookies = req.cookies;
+      
         try {
-            const admin = await Admin.findOne({ where: { refreshToken } });
-            if (!admin) return res.sendStatus(403);
-
-            jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, decoded) => {
-                if (err) return res.sendStatus(403);
-
-                const newAccessToken = jwt.sign(
-                    { id: admin.id, email: admin.email },
-                    process.env.JWT_ACCESS_SECRET,
-                    { expiresIn: '15m' }
-                );
-
-                // Get the secure and SameSite cookie settings based on environment
-                const secureCookie = getSecureCookieSetting();
-                const sameSiteSetting = getSameSiteSetting();
-
-                res.cookie('accessToken', newAccessToken, {
-                    httpOnly: true,
-                    secure: secureCookie,
-                    sameSite: sameSiteSetting
-                });
-
-                return res.status(200).json({ message: 'Access token refreshed' });
-            });
-        } catch (err) {
-            next(err);
+          if (!cookies?.jwt) {
+            const error = new Error("the cookies token is not found");
+            error.statustCode = 400;
+            return next(error)
+          }
+          const refreshtoken = cookies.jwt;
+          const decoded = jwt.verify(refreshtoken, process.env.refreshtoken)
+          const admin = await Admin.findByPk(decoded.id);
+          if (!admin) {
+            const admin = await Admin.findByPk(decoded.id);
+            if (!admin) {
+              return res.status(404).json({ message: "no user found" })
+            }
+      
+          }
+          const accesstoken = jwt.sign({id: decoded.id, email: decoded.email,  }, process.env.accessToken, { expiresIn: "1hr" });
+          res.status(200).json({ accesstoken, decoded })
+      
         }
-    },
+        catch (error) {
+          if (error.name === 'JsonWebTokenError') {
+      
+            return res.status(403).json({ message: "Invalid refresh token" });
+          }
+          if (error.name === 'TokenExpiredError') {
+            return res.status(403).json({ message: "Refresh token expired" });
+          }
+          res.status(500).json({ message: error.message });
+        }
+      },
 
     logoutAdmin: async (req, res, next) => {
         // Clear cookies for access and refresh tokens

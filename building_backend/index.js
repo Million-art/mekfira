@@ -36,8 +36,8 @@ app.use(
 
 // Routes
 app.use("/api/offices/", officeRoutes); // Office routes (fixed)
-app.use("/api/admin/", adminRoutes); // Admin routes
-app.use("/api/rentals", rentalRoutes);
+app.use("/api/admin/",  adminRoutes); // Admin routes
+app.use("/api/rentals/", rentalRoutes);
 // Error handler middleware
 app.use(errorHandler);
 

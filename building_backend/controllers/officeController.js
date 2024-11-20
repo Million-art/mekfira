@@ -65,8 +65,7 @@ const officeController = {
         try {
             const { officeNo, price, area, floorNo, status } = req.body;
             const {adminId} = req.user
-            console.log("Aaaaaa",adminId)
-
+ 
             // Validate if adminId exists in the Admin table
             const admin = await Admin.findByPk(adminId);
             if (!admin) {
