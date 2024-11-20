@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Office, OfficeError } from '../type';
+import  { Office, OfficeError } from '../type';
+import  { OfficeStatus } from "../type";  // Adjust the path to match the correct folder
+
 import api from '../api/api';
 
 const OfficeForm: React.FC<{ addOffice: (office: Office) => void }> = ({ addOffice }) => {
@@ -11,7 +13,7 @@ const OfficeForm: React.FC<{ addOffice: (office: Office) => void }> = ({ addOffi
         price: 0,
         area: '',
         floorNo: 0,
-        status: 'Available',
+        status: OfficeStatus.Available,
     });
 
     const [errors, setErrors] = useState<OfficeError>({
@@ -73,13 +75,13 @@ const OfficeForm: React.FC<{ addOffice: (office: Office) => void }> = ({ addOffi
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
+    
         const validationErrors = validate();
         if (Object.values(validationErrors).some((error) => error !== '')) {
             setErrors(validationErrors);
             return;
         }
-
+    
         setLoading(true);
         try {
             const response = await api.post('api/offices/add', office);
@@ -92,7 +94,7 @@ const OfficeForm: React.FC<{ addOffice: (office: Office) => void }> = ({ addOffi
                     price: 0,
                     area: '',
                     floorNo: 0,
-                    status: 'Available',  // Reset status to 'Available'
+                    status: OfficeStatus.Available,  // Reset status to 'Available'
                 });
                 setErrors({
                     officeId: '',
@@ -107,7 +109,20 @@ const OfficeForm: React.FC<{ addOffice: (office: Office) => void }> = ({ addOffi
                 toast.error('Failed to add office.');
             }
         } catch (error: any) {
-            if (error.response?.data?.errors) {
+            if (error.response?.data?.message) {
+                // If there's a custom error message in the response, set that message
+                const apiMessage = error.response.data.message;
+                setErrors({
+                    officeId: '',
+                    officeNo: apiMessage.includes('already exists') ? 'This office number is already taken.' : '',
+                    price: '',
+                    area: '',
+                    floorNo: '',
+                    status: '',
+                });
+                toast.error(apiMessage);
+            } else if (error.response?.data?.errors) {
+                // Handle validation errors from the API
                 const apiErrors: OfficeError = error.response.data.errors.reduce(
                     (acc: OfficeError, error: { param: string; msg: string }) => {
                         if (acc.hasOwnProperty(error.param)) {
@@ -119,6 +134,7 @@ const OfficeForm: React.FC<{ addOffice: (office: Office) => void }> = ({ addOffi
                 );
                 setErrors(apiErrors);
             } else {
+                // Handle unexpected errors
                 setErrors({
                     officeId: 'An unexpected error occurred. Please try again later.',
                     officeNo: '',
@@ -133,6 +149,7 @@ const OfficeForm: React.FC<{ addOffice: (office: Office) => void }> = ({ addOffi
             setLoading(false);
         }
     };
+    
 
     return (
         <div>
@@ -157,7 +174,7 @@ const OfficeForm: React.FC<{ addOffice: (office: Office) => void }> = ({ addOffi
                 {/* Price */}
                 {errors.price && <p className="text-red-500">{errors.price}</p>}
                 <div className="mb-4">
-                    <label htmlFor="price" className="block text-sm font-medium text-gray-700">Price</label>
+                    <label htmlFor="price" className="block text-sm font-medium text-gray-700">Duration</label>
                     <input
                         name="price"
                         type="number"

@@ -35,7 +35,7 @@ app.use(
 ); // Logger middleware
 
 // Routes
-app.use("/api/offices/", officeRoutes); // Office routes (fixed)
+app.use("/api/offices", officeRoutes); // Office routes (fixed)
 app.use("/api/admin/",  adminRoutes); // Admin routes
 app.use("/api/rentals/", rentalRoutes);
 // Error handler middleware
@@ -43,7 +43,7 @@ app.use(errorHandler);
 
   
 // Database connection and sync (ensure the database schema is correct)
-sequelize.sync({ force: true })
+sequelize.sync()
   .then(() => {
     console.log("Tables synchronized!");
   })
@@ -58,8 +58,9 @@ app.listen(port, () => {
 });
 
 // Global error handling (unhandled promise rejections, uncaught exceptions)
-process.on("unhandledRejection", (reason, promise) => {
+process.on("unhandledRejection", (reason,error, promise) => {
   logger.error("Unhandled Rejection at:", { reason, promise });
+  console.error('Unhandled Rejection:', error);
 });
 
 process.on("uncaughtException", (err) => {

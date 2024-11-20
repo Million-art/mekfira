@@ -43,7 +43,7 @@ router.delete('/:id', adminController.deleteAdmin);
 router.post('/login', loginValidation, adminController.loginAdmin);
 
 // Route to refresh access token
-router.post('/refresh-token', adminController.accessTokenGenerator);
+router.post('/refresh', adminController.accessTokenGenerator);
 
 // Route to add an admin
 router.post('/add-admin', addAdminValidation, adminController.addAdmin);

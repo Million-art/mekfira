@@ -5,21 +5,35 @@ const Office = require('../models/officeModel'); // Office model for reference
 
 // Controller to add a rental
 const addRental = async (req, res, next) => {
-  const { renterName, renterPhone, rentedOfficeId, adminId } = req.body;
+  const { renter, rentedOfficeId, rentalStartDate, rentalEndDate } = req.body;
+  const { name, phone } = renter;
 
   try {
-    // Check if the office and admin exist
+    // Check if the office exists
     const office = await Office.findByPk(rentedOfficeId);
     if (!office) {
       return res.status(404).json({ message: 'Office not found' });
     }
 
+    // Check if the office is already rented
+    const existingRental = await Rental.findOne({
+      where: {
+        rentedOfficeId: rentedOfficeId,
+        rentalEndDate: { [Op.gt]: new Date() }, // Ensure the rental period is still active
+      },
+    });
+
+    if (existingRental) {
+      return res.status(400).json({ message: 'This office is already rented.' });
+    }
+
     // Create a new rental record
     const rental = await Rental.create({
-      renterName,
-      renterPhone,
-      rentedOfficeId,
-      adminId,
+      tenantName: name,
+      phone: phone,
+      rentedOfficeId: rentedOfficeId,
+      rentalStartDate: rentalStartDate,
+      rentalEndDate: rentalEndDate,
     });
 
     res.status(201).json(rental);
@@ -28,6 +42,7 @@ const addRental = async (req, res, next) => {
   }
 };
 
+
 // Controller to get all rentals
 const getRentals = async (req, res, next) => {
   try {
@@ -35,7 +50,7 @@ const getRentals = async (req, res, next) => {
       include: [
         {
           model: Office,
-          as: 'rentedOffice', // The alias for Office model association
+          as: 'office', // The alias for Office model association
         },
       ],
     });

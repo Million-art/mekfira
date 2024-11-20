@@ -12,7 +12,7 @@ const router = express.Router();
 
 // Routes for rental operations
 router.post('/add', addRental); // Add a rental
-router.get('/', getRentals); // Get all rentals
+router.get('/all', getRentals); // Get all rentals
 router.get('/:id', getRentalById); // Get rental by ID
 router.patch('/:id', updateRental); // Update a rental by renterId
 router.delete('/:id', deleteRental); // Delete a rental by renterId

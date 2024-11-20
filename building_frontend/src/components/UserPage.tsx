@@ -1,22 +1,36 @@
-import React from 'react';
-import UserList from './UserList'; // Adjust the import path if necessary
-import { User } from '../type'; // Assuming you have a User type defined
+import React, { useState } from 'react';
+import RentalList from './RentalList'; // Adjust the import path to RentalList if needed
+import { Rental } from '../type'; // Assuming you have a Rental type defined
 
 interface UserPageProps {
-    users: User[];           // Pass the list of users as a prop
-    deleteUser: (userId: string) => void; // Function to handle user deletion
+    users: Rental[];           // Pass the list of renters as a prop
+    deleteUser: (userId: string) => void; // Function to handle renter deletion
 }
 
 const UserPage: React.FC<UserPageProps> = ({ users, deleteUser }) => {
-    if (users.length === 0) {
-        return <p>No users available.</p>;
+    const [rentals, setRentals] = useState<Rental[]>(users);
+
+    // Function to extend the contract
+    const extendContract = (rentalId: string, newEndDate: string) => {
+        setRentals(prevRentals =>
+            prevRentals.map(rental =>
+                rental.rentalId === rentalId
+                    ? { ...rental, rentalEndDate: new Date(newEndDate) }
+                    : rental
+            )
+        );
+    };
+
+    if (rentals.length === 0) {
+        return <p>No tenant available.</p>;  // Show this if there are no users
     }
-console.log('aaaaaaaa',users)
+
     return (
-        <div>jhkhk
+        <div className="p-6">
             <h1 className="text-3xl font-bold mb-6">User Management</h1>
-            <p className="mb-4">There are <b className='3xl'>{users.length}</b> users</p>
-            <UserList users={users} deleteUser={deleteUser} />
+            <p className="mb-4">There are <b>{rentals.length}</b> tenants</p>
+            {/* Render RentalList component to display the users */}
+            <RentalList rentals={rentals} deleteUser={deleteUser} extendContract={extendContract} />
         </div>
     );
 };

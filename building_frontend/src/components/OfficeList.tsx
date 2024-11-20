@@ -29,13 +29,13 @@ const OfficeList: React.FC<OfficeListProps> = ({ offices, onEditOffice, deleteOf
         {offices.length === 0 ? (
           <li className="p-4 text-center text-gray-500">No offices available.</li>
         ) : (
-          offices.map((office) => (
-            <li key={office.officeId} className="p-4 hover:bg-gray-100 transition duration-150">
+          offices.map((office,index) => (
+            <li key={index} className="p-4 hover:bg-gray-100 transition duration-150">
               <div className="flex justify-between items-center">
                 <div className="flex-1">
                   <h2 className="text-lg font-semibold">Office No: {office.officeNo}</h2>
                   <p className="text-gray-700">Area: {office.area}</p>
-                  <p className="text-gray-700">Price: ${office.price}</p>
+                  <p className="text-gray-700">duration: Rented For {office.price} Months</p>
                   <p className="text-gray-600">Floor: {office.floorNo}</p>
                   <p className={`text-gray-600 font-semibold`}>
                     Status: <span className={`text-${office.status === 'Available' ? 'green' : office.status === 'Rented' ? 'blue' : 'yellow'}-600`}>{office.status}</span>

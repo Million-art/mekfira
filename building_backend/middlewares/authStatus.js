@@ -23,11 +23,10 @@ const authStatus = (req, res, next) => {
 
         // Attach user data to the request object so that subsequent handlers can access it
         req.user = {
-            id: decoded.id,
+            adminId: decoded.id,
             email: decoded.email,
         };
-
-        // Continue to the next middleware or route handler
+         // Continue to the next middleware or route handler
         next();
     } catch (error) {
         // Log the error for debugging

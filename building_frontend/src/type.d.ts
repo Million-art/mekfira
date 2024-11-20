@@ -4,7 +4,7 @@ export enum OfficeStatus {
     Rented = 'Rented',
     UnderMaintenance = 'UnderMaintenance',
 }
-
+ 
 // Define the structure for an office
 export interface Office {
     officeId: string;          // Unique identifier for the office
@@ -30,6 +30,21 @@ export interface Renter {
     renterId: string; // Unique identifier for the renter
     name: string;     // Name of the renter
     phone: string;    // Contact number of the renter
+}
+export interface Rental {
+    rentalId: string; // UUID as a string
+    tenantName: string;
+    phone: string;
+    rentedOfficeId: string; // UUID as a string
+    rentalStartDate: Date; // ISO format date string
+    rentalEndDate?: Date;  // Optional, ISO format date string
+    Office?: {
+        officeNo: string;
+        price: number;
+        area: string;
+        floorNo: number;
+        status: OfficeStatus;  // Use OfficeStatus enum here
+    };
 }
 
 // RentOfficeForm for collecting office rental details

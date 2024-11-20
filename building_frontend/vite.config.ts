@@ -12,8 +12,11 @@ export default defineConfig({
   },
   plugins: [react()],
   resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.json', '.d.ts'], // Ensure `.d.ts` is included
+
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  
 })

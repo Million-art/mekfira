@@ -101,12 +101,12 @@ const RentOffice: React.FC<RentOfficeProps> = ({ addRent, offices }) => {
             setErrors(validationErrors);
             return;
         }
-
+    
         setLoading(true);
         try {
             // Simulate API call and send rentalDetails as payload
             const response = await api.post('api/rentals/add', rentalDetails);
-
+    
             if (response.status === 201) {
                 addRent(response.data); // Add rented office details
                 toast.success('Office rented successfully!');
@@ -128,11 +128,33 @@ const RentOffice: React.FC<RentOfficeProps> = ({ addRent, offices }) => {
                 toast.error('Failed to rent office.');
             }
         } catch (error) {
-            toast.error('An error occurred while renting the office.');
+            setLoading(false);
+            // Handle specific API errors based on the response error
+            if (error.response) {
+                // API responded with an error
+                const { status, data } = error.response;
+    
+                if (status === 400 && data.message === 'This office is already rented.') {
+                    toast.error('This office is already rented.');
+                } else if (status === 404) {
+                    toast.error('Office not found.');
+                } else if (status === 500) {
+                    toast.error('Server error. Please try again later.');
+                } else {
+                    toast.error('An error occurred. Please try again.');
+                }
+            } else if (error) {
+                // The request was made, but no response was received
+                toast.error('Network error. Please check your connection.');
+            } else {
+                // Something went wrong setting up the request
+                toast.error('An error occurred while setting up the request.');
+            }
         } finally {
             setLoading(false);
         }
     };
+    
 
     return (
         <div>
@@ -176,7 +198,7 @@ const RentOffice: React.FC<RentOfficeProps> = ({ addRent, offices }) => {
                     <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
                     <input
                         name="phone"
-                        type="text"
+                        type="tel"
                         value={renter.phone}
                         onChange={handleRenterChange}
                         className={`border p-2 w-full ${errors.renter?.phone ? 'border-red-500' : ''}`}

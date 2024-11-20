@@ -12,7 +12,7 @@ officeRoutes.get('/all', OfficeController.getAllOffices);
 officeRoutes.get('/one/:id', OfficeController.getOfficeById);
 
 // Add a new office
-officeRoutes.post('/add', authStatus, OfficeController.addOffice);
+officeRoutes.post('/add',authStatus,  OfficeController.addOffice);
 
 // Edit office details by ID
 officeRoutes.put('/edit/:id', OfficeController.updateOffice);

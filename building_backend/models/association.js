@@ -1,6 +1,6 @@
-const Admin = require("./adminModel");    // Admin model
-const Rental = require("./rentalModel");  // Rental (Tenant) model
-const Office = require("./officeModel");  // Office model
+const Admin = require("./adminModel");
+const Rental = require("./rentalModel");
+const Office = require("./officeModel");
 
 const setupAssociations = () => {
     // Admin manages multiple offices
@@ -14,15 +14,15 @@ const setupAssociations = () => {
         as: 'admin',
     });
 
-    // One Rental (Tenant) can occupy many offices
-    Rental.hasMany(Office, {
-        foreignKey: 'tenantId', // Foreign key in Office pointing to Rental
-        as: 'offices',          // Alias for offices rented by the tenant
+    // One Office can be rented by one Rental (Tenant) at a time
+    Rental.belongsTo(Office, {
+        foreignKey: 'rentedOfficeId', // Foreign key in Rental pointing to Office
+        as: 'office',                 // Alias for office rented by the tenant
     });
 
-    Office.belongsTo(Rental, {
-        foreignKey: 'tenantId', // Foreign key in Office pointing to Rental
-        as: 'tenant',           // Alias for the tenant of the office
+    Office.hasOne(Rental, {
+        foreignKey: 'rentedOfficeId', // Foreign key in Office pointing to Rental
+        as: 'rental',                  // Alias for rental associated with the office
     });
 };
 

@@ -61,18 +61,24 @@ const officeController = {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
+    
         try {
             const { officeNo, price, area, floorNo, status } = req.body;
-            const {adminId} = req.user
- 
+            const adminId = req.user.adminId;
+    
             // Validate if adminId exists in the Admin table
             const admin = await Admin.findByPk(adminId);
             if (!admin) {
                 return res.status(404).json({ message: 'Admin not found' });
             }
     
-            // Create new Office
+            // Check if an office with the same officeNo already exists
+            const existingOffice = await Office.findOne({ where: { officeNo } });
+            if (existingOffice) {
+                return res.status(400).json({ message: 'Office already added' });
+            }
+    
+            // Create new Office if not already existing
             const newOffice = await Office.create({
                 officeNo,
                 price,
@@ -87,7 +93,7 @@ const officeController = {
             console.error(error);
             res.status(500).json({ message: 'Failed to create office', error: error.message });
         }
-    },
+    },    
 
     // Update an office
     updateOffice: async (req, res, next) => {

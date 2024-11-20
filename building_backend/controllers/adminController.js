@@ -120,7 +120,7 @@ const adminController = {
             res.cookie('accessToken', accessToken, { httpOnly: true, secure: secureCookie, sameSite: sameSiteSetting });
             res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: secureCookie, sameSite: sameSiteSetting });
 
-            res.status(200).json({ data: admin, message: 'Login successful' });
+            res.status(200).json({ data: admin, message: 'Login successful',accessToken });
 
         } catch (err) {
             next(err);
@@ -140,10 +140,8 @@ const adminController = {
           const decoded = jwt.verify(refreshtoken, process.env.refreshtoken)
           const admin = await Admin.findByPk(decoded.id);
           if (!admin) {
-            const admin = await Admin.findByPk(decoded.id);
-            if (!admin) {
               return res.status(404).json({ message: "no user found" })
-            }
+            
       
           }
           const accesstoken = jwt.sign({id: decoded.id, email: decoded.email,  }, process.env.accessToken, { expiresIn: "1hr" });
