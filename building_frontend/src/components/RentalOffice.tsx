@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Office, RentOfficeForm, RentOfficeError } from '../type';
+import { Office, RentOfficeForm, RentOfficeError, ActiveSection } from '../type';
 import api from '@/api/api';
+import fetchOffices from '@/utils/helpers/fetchOffices';
+import axios from 'axios';
 
 interface RentOfficeProps {
-    addRent: (rent: RentOfficeForm) => void;
-    offices: Office[];  // Office list passed as a prop
+    activeSection:ActiveSection
 }
 
-const RentOffice: React.FC<RentOfficeProps> = ({ addRent, offices }) => {
+const RentOffice: React.FC<RentOfficeProps> = ({ activeSection }) => {
+    const [offices, setOffices] = useState<Office[]>([]); // Initial state for offices
+
     const [renter, setRenter] = useState({
         renterId: '', 
         name: '',
@@ -33,6 +36,19 @@ const RentOffice: React.FC<RentOfficeProps> = ({ addRent, offices }) => {
     });
 
     const [loading, setLoading] = useState<boolean>(false);
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            await fetchOffices({ setOffices, activeSection });
+           console.log('Offices data:', offices);  // Log offices after state is updated
+        } catch (error) {
+            console.error('Error fetching offices:', error);
+          }
+        };
+      
+        fetchData();
+      }, [activeSection]);
+      
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -108,8 +124,7 @@ const RentOffice: React.FC<RentOfficeProps> = ({ addRent, offices }) => {
             const response = await api.post('api/rentals/add', rentalDetails);
     
             if (response.status === 201) {
-                addRent(response.data); // Add rented office details
-                toast.success('Office rented successfully!');
+                 toast.success('Office rented successfully!');
                 setRentalDetails({
                     renter: { renterId: '', name: '', phone: '' },
                     rentedOfficeId: '',
@@ -130,9 +145,8 @@ const RentOffice: React.FC<RentOfficeProps> = ({ addRent, offices }) => {
         } catch (error) {
             setLoading(false);
             // Handle specific API errors based on the response error
-            if (error.response) {
-                // API responded with an error
-                const { status, data } = error.response;
+            if (axios.isAxiosError(error)) {
+                const { status, data } = error.response || {};
     
                 if (status === 400 && data.message === 'This office is already rented.') {
                     toast.error('This office is already rented.');

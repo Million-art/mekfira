@@ -14,7 +14,7 @@ const Office = sequelize.define('Office', {
     },
     price: {
         type: DataTypes.FLOAT,
-        allowNull: false,
+        allowNull: true,
     },
     area: {
         type: DataTypes.STRING,

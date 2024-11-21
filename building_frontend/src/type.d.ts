@@ -9,7 +9,6 @@ export enum OfficeStatus {
 export interface Office {
     officeId: string;          // Unique identifier for the office
     officeNo: string;          // Office number
-    price: number;             // Price of the office (number)
     area: string;              // Area of the office (e.g., size in square meters)
     floorNo: number;           // Floor number the office is on
     status: OfficeStatus;      // Current status of the office
@@ -19,7 +18,6 @@ export interface Office {
 export type OfficeError = {
     officeId?: string;         // Error for officeId
     officeNo?: string;         // Error for officeNo
-    price?: string;            // Error for price
     area?: string;             // Error for area
     floorNo?: string;          // Error for floorNo
     status?: string;           // Error for status
@@ -38,9 +36,8 @@ export interface Rental {
     rentedOfficeId: string; // UUID as a string
     rentalStartDate: Date; // ISO format date string
     rentalEndDate?: Date;  // Optional, ISO format date string
-    Office?: {
+    office: {
         officeNo: string;
-        price: number;
         area: string;
         floorNo: number;
         status: OfficeStatus;  // Use OfficeStatus enum here

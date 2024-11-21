@@ -1,37 +1,47 @@
 import React, { useState, useEffect } from 'react';
-import { Office } from '../type';
+import { Office, ActiveSection } from '../type';
 import api from '@/api/api';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import OfficeList from './OfficeList';
 import EditOffice from './EditOffice';
+import fetchOffices from '@/utils/helpers/fetchOffices';
 
 interface OfficePageProps {
-  offices: Office[];
-  deleteOffice: (officeId: string) => Promise<void>;
+  activeSection: ActiveSection; // Fix the type for activeSection here
 }
 
-const OfficePage: React.FC<OfficePageProps> = ({ offices, deleteOffice }) => {
-  const [filteredOffices, setFilteredOffices] = useState<Office[]>(offices);
-  const [selectedStatus, setSelectedStatus] = useState<string>('all'); // Added status filter
+const OfficePage: React.FC<OfficePageProps> = ({ activeSection }) => {
+  const [offices, setOffices] = useState<Office[]>([]); // Initial state for offices
+  const [filteredOffices, setFilteredOffices] = useState<Office[]>([]); // State for filtered offices
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [editingOffice, setEditingOffice] = useState<Office | null>(null);
 
+  // Fetch offices whenever activeSection changes
+  useEffect(() => {
+    fetchOffices({ setOffices, activeSection });
+  }, [activeSection]);
+
+  // Filter offices based on status
   useEffect(() => {
     if (selectedStatus === 'all') {
       setFilteredOffices(offices);
     } else {
-      setFilteredOffices(offices.filter(office => office?.status === selectedStatus));
+      setFilteredOffices(offices.filter(office => office.status === selectedStatus));
     }
   }, [selectedStatus, offices]);
 
+  // Handle edit office
   const handleEditOffice = (office: Office) => {
     setEditingOffice(office);
   };
 
+  // Handle cancel edit
   const handleCancelEdit = () => {
     setEditingOffice(null);
   };
 
+  // Handle office update
   const handleOfficeUpdated = async (updatedOffice: Office) => {
     try {
       const response = await api.put(`api/offices/edit/${updatedOffice.officeId}`, updatedOffice);
@@ -50,8 +60,20 @@ const OfficePage: React.FC<OfficePageProps> = ({ offices, deleteOffice }) => {
     }
   };
 
+  // Delete office by officeId
+  const deleteOffice = async (officeId: string) => {
+    try {
+      await api.delete(`api/offices/delete/${officeId}`);
+      setOffices(prevOffices => prevOffices.filter(office => office.officeId !== officeId));
+      toast.success('Office deleted successfully.');
+    } catch (error) {
+      console.error('Error deleting office:', error);
+      toast.error('Failed to delete office. Please try again.');
+    }
+  };
+
   return (
-    <div>
+    <div className="p-6">
       <h1 className="text-3xl font-bold mb-6">Office Management</h1>
 
       {/* Status Filter */}
@@ -69,6 +91,7 @@ const OfficePage: React.FC<OfficePageProps> = ({ offices, deleteOffice }) => {
         </select>
       </div>
 
+      {/* Render edit office form or office list */}
       {editingOffice ? (
         <EditOffice
           office={editingOffice}
@@ -76,7 +99,11 @@ const OfficePage: React.FC<OfficePageProps> = ({ offices, deleteOffice }) => {
           onOfficeUpdated={handleOfficeUpdated}
         />
       ) : (
-        <OfficeList offices={filteredOffices} onEditOffice={handleEditOffice} deleteOffice={deleteOffice} />
+        <OfficeList
+          offices={filteredOffices}
+          onEditOffice={handleEditOffice}
+          deleteOffice={deleteOffice}
+        />
       )}
 
       {/* Toast notifications */}

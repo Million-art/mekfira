@@ -35,7 +35,6 @@ const OfficeList: React.FC<OfficeListProps> = ({ offices, onEditOffice, deleteOf
                 <div className="flex-1">
                   <h2 className="text-lg font-semibold">Office No: {office.officeNo}</h2>
                   <p className="text-gray-700">Area: {office.area}</p>
-                  <p className="text-gray-700">duration: Rented For {office.price} Months</p>
                   <p className="text-gray-600">Floor: {office.floorNo}</p>
                   <p className={`text-gray-600 font-semibold`}>
                     Status: <span className={`text-${office.status === 'Available' ? 'green' : office.status === 'Rented' ? 'blue' : 'yellow'}-600`}>{office.status}</span>

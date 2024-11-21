@@ -63,7 +63,7 @@ const officeController = {
         }
     
         try {
-            const { officeNo, price, area, floorNo, status } = req.body;
+            const { officeNo, area, floorNo, status } = req.body;
             const adminId = req.user.adminId;
     
             // Validate if adminId exists in the Admin table
@@ -81,7 +81,6 @@ const officeController = {
             // Create new Office if not already existing
             const newOffice = await Office.create({
                 officeNo,
-                price,
                 area,
                 floorNo,
                 status,

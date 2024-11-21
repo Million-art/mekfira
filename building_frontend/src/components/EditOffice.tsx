@@ -28,8 +28,9 @@ const EditOffice: React.FC<EditOfficeProps> = ({ office, onCancel, onOfficeUpdat
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await onOfficeUpdated(formData);  // Call the parent function to update the office
+      await onOfficeUpdated(formData);
       toast.success('Office updated successfully!');
+      window.location.reload();
     } catch (error) {
       toast.error('Error updating office. Please try again.');
     }

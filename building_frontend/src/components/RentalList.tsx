@@ -3,41 +3,59 @@ import { Rental } from '../type';
 
 interface RentalListProps {
     rentals: Rental[];
-    deleteUser: (userId: string) => void;
-    extendContract: (rentalId: string, newEndDate: string) => void;  // Function to extend the contract
+    deleteRenter: (userId: string) => void;
+    extendContract: (rentalId: string, newEndDate: string) => void;
 }
 
-const RentalList: React.FC<RentalListProps> = ({ rentals, deleteUser, extendContract }) => {
+const RentalList: React.FC<RentalListProps> = ({ rentals, deleteRenter, extendContract }) => {
+ 
     const [editingEndDate, setEditingEndDate] = useState<string | null>(null);
     const [newEndDate, setNewEndDate] = useState<string>('');
 
     const handleEndDateChange = (rentalId: string) => {
-        extendContract(rentalId, newEndDate);
-        setEditingEndDate(null);
-        setNewEndDate('');
+        if (newEndDate) {
+            extendContract(rentalId, newEndDate);
+            setEditingEndDate(null);
+            setNewEndDate('');
+        }
     };
 
     return (
         <div className="space-y-6">
-            {rentals.map(rental => {
-                // Ensure rentalStartDate is a Date object
-                const rentalStartDate = rental.rentalStartDate instanceof Date
-                    ? rental.rentalStartDate
-                    : new Date(rental.rentalStartDate); // Convert string to Date
+            {rentals.map((rental) => {
+                // Handle potential undefined values for dates
+                const rentalStartDate = rental.rentalStartDate ? new Date(rental.rentalStartDate) : null;
+                const rentalEndDate = rental.rentalEndDate ? new Date(rental.rentalEndDate) : null;
 
                 return (
-                    <div key={rental.rentalId} className="border p-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
+                    <div
+                        key={rental.rentalId}
+                        className="border p-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                    >
                         <p className="font-bold text-xl">{rental.tenantName}</p>
-                        <p className="text-gray-600">{rental.phone}</p>
-                        <p className="text-sm text-gray-500">Office ID: {rental.rentedOfficeId}</p>
-                        {/* Format date only if it's a valid date */}
+                        <p className="text-gray-600">Phone: {rental.phone}</p>
                         <p className="text-sm text-gray-500">
-                            Start Date: {!isNaN(rentalStartDate.getTime()) ? rentalStartDate.toLocaleDateString() : 'Invalid date'}
+                            Office No: {rental?.office?.officeNo || 'Not specified'}
                         </p>
-                        
+                        <p className="text-sm text-gray-500">
+                            Floor No: {rental?.office?.floorNo || 'Not specified'}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                            Start Date:{' '}
+                            {rentalStartDate
+                                ? rentalStartDate.toLocaleDateString()
+                                : 'Not specified'}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                            End Date:{' '}
+                            {rentalEndDate
+                                ? rentalEndDate.toLocaleDateString()
+                                : 'Not specified'}
+                        </p>
+
                         <div className="flex items-center space-x-4 mt-4">
                             <button
-                                onClick={() => deleteUser(rental.rentalId)}
+                                onClick={() => deleteRenter(rental.rentalId)}
                                 className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-all duration-200"
                             >
                                 Delete
@@ -51,7 +69,6 @@ const RentalList: React.FC<RentalListProps> = ({ rentals, deleteUser, extendCont
                             </button>
                         </div>
 
-                        {/* Display an input field for end date editing */}
                         {editingEndDate === rental.rentalId && (
                             <div className="mt-4">
                                 <input
@@ -65,6 +82,12 @@ const RentalList: React.FC<RentalListProps> = ({ rentals, deleteUser, extendCont
                                     className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 ml-2"
                                 >
                                     Save
+                                </button>
+                                <button
+                                    onClick={() => setEditingEndDate(null)}
+                                    className="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 ml-2"
+                                >
+                                    Cancel
                                 </button>
                             </div>
                         )}

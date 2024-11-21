@@ -51,8 +51,10 @@ const getRentals = async (req, res, next) => {
         {
           model: Office,
           as: 'office', // The alias for Office model association
+          attributes: ['officeNo', 'floorNo'], // Correct syntax for selecting specific columns
+
         },
-      ],
+       ],
     });
     res.status(200).json(rentals);
   } catch (error) {
