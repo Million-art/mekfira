@@ -33,13 +33,13 @@ const OfficeList: React.FC<OfficeListProps> = ({ offices, onEditOffice, deleteOf
   return (
     <div className="p-4">
       {/* Search box */}
-      <div className="mb-4 flex items-center justify-between sm:mb-6">
+      <div className="mb-4 flex items-center justify-between w-full sm:mb-6">
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by Office No."
-          className="p-2 border border-gray-300 rounded "
+          className="p-2 border border-gray-300 w-full rounded "
         />
       </div>
 

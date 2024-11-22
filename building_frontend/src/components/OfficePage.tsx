@@ -44,7 +44,7 @@ const OfficePage: React.FC<OfficePageProps> = ({ activeSection }) => {
   // Handle office update
   const handleOfficeUpdated = async (updatedOffice: Office) => {
     try {
-      const response = await api.put(`api/offices/edit/${updatedOffice.officeId}`, updatedOffice);
+      const response = await api.patch(`api/offices/edit/${updatedOffice.officeId}`, updatedOffice);
       if (response.status === 200) {
         setFilteredOffices(prevOffices =>
           prevOffices.map(office => (office.officeId === updatedOffice.officeId ? updatedOffice : office))

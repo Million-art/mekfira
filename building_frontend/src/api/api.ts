@@ -2,7 +2,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify'; // For toast notifications
 
 const api = axios.create({
-  baseURL: 'http://localhost:3001',
+  baseURL: 'https://mekfirabackend.dirtechsolution.com',
   withCredentials: true,  // Important for sending cookies
 });
  
@@ -30,12 +30,14 @@ api.interceptors.response.use(
         console.error('Refresh token failed', refreshError);
          // Show a session expired message
         toast.error('Session expired. Please logout and log in again.');
-        setTimeout(() => {
-          // Redirect to login page if the user is not logged in
-          window.location.href = '/login'
-        },3000)
-         return Promise.reject(refreshError);
-      }
+      //   if(refreshError){
+      //   setTimeout(() => {
+      //     // Redirect to login page if the user is not logged in
+      //     window.location.href = '/login'
+      //   },3000)
+      //    return Promise.reject(refreshError);
+      // }
+    }
     }
 
     // Return the error if it's not a 401 or can't refresh

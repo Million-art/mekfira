@@ -1,7 +1,7 @@
 // src/components/SideBar.tsx
 import React, { useState } from 'react';
 import { ActiveSection } from '../type'; // Adjust the import path as necessary
-import { FaHome, FaPlus, FaClipboardList, FaUsers, FaDollarSign, FaSignOutAlt, FaBars } from 'react-icons/fa'; // Font Awesome icons
+import { FaHome, FaPlus, FaClipboardList, FaUsers, FaSignOutAlt, FaBars } from 'react-icons/fa'; // Font Awesome icons
 
 interface SideBarProps {
   setActiveSection: (section: ActiveSection) => void; // Function to change the active section

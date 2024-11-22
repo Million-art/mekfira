@@ -15,7 +15,7 @@ officeRoutes.get('/one/:id', OfficeController.getOfficeById);
 officeRoutes.post('/add',authStatus,  OfficeController.addOffice);
 
 // Edit office details by ID
-officeRoutes.put('/edit/:id', OfficeController.updateOffice);
+officeRoutes.patch('/edit/:id', OfficeController.updateOffice);
 
 // Delete office by ID
 officeRoutes.delete('/delete/:id', OfficeController.deleteOffice);

@@ -66,6 +66,12 @@
   input{
     background-color: aliceblue;
     color: black;
+    
+  }
+  select{
+    background-color: white;
+    color: black;
+    border-color : rgb(76, 76, 255);
   }
 }
 

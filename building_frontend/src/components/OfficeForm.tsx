@@ -13,7 +13,7 @@ interface OfficePageProps {
 
 const OfficeForm: React.FC<OfficePageProps> = ({ activeSection }) => {
   const [offices, setOffices] = useState<Office[]>([]); // Initial state for offices
-
+  console.log(offices);
   const [office, setOffice] = useState<Office>({
     officeId: '',  // This will not be used in the form
     officeNo: '',

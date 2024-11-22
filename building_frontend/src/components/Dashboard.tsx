@@ -2,7 +2,7 @@ import React from "react";
 import OfficeForm from "./OfficeForm";
 import OfficePage from "./OfficePage";
 import { DashboardProps } from "../type"; // Adjust the path based on your project structure
-import MyChart from "./MyChart";
+// import MyChart from "./MyChart";
 import UserPage from "./RenterPage";
 import RentOffice from "./RentalOffice";
 import Analytics from "./Analytics";
@@ -14,7 +14,7 @@ const Dashboard: React.FC<DashboardProps> = ({ activeSection }) => {
       {/* Render chart if the active section is 'dashboard' */}
       {activeSection === "dashboard" && (
         <div className="h-[100%]  md:flex">
-          <MyChart />
+          {/* <MyChart /> */}
           <Analytics />
         </div>
       )}

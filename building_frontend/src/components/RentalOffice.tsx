@@ -41,8 +41,7 @@ const RentOffice: React.FC<RentOfficeProps> = ({ activeSection }) => {
         const fetchData = async () => {
             try {
                 await fetchOffices({ setOffices, activeSection });
-                console.log('Offices data:', offices); // Log offices after state is updated
-            } catch (error) {
+             } catch (error) {
                 console.error('Error fetching offices:', error);
             }
         };
@@ -122,8 +121,12 @@ const RentOffice: React.FC<RentOfficeProps> = ({ activeSection }) => {
         try {
             console.log('Loading', rentalDetails);
             // Simulate API call and send rentalDetails as payload
-            const response = await api.post('api/rentals/add', rentalDetails);
-
+            const response = await api.post('api/rentals/add', rentalDetails)
+            const updateOfficeResponse = await api.patch(
+                `api/offices/edit/${rentalDetails.rentedOfficeId}`,
+                { status: 'rented' } // Pass the data as a JSON object in the body
+            );
+                        console.log(updateOfficeResponse)
             if (response.status === 201) {
                 toast.success('Office rented successfully!');
                 setRentalDetails({
