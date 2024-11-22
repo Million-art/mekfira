@@ -3,7 +3,7 @@ import api from "../../api/api";
 
 const fetchUsers = async ({setRentals,activeSection}:{setRentals: (users: Rental[]) => void, activeSection: DashboardProps['activeSection'] }) => {
 
-    if (activeSection === 'manageUsers') {
+    if (activeSection === 'manageUsers'|| activeSection === 'manageOffices') {
         try {
             const response = await api.get(`api/rentals/all`);
             console.log('users',response.data)

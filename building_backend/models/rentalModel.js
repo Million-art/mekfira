@@ -15,8 +15,7 @@
         phone: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true,
-        },
+         },
         rentedOfficeId: {
             type: DataTypes.UUID,
             allowNull: false,

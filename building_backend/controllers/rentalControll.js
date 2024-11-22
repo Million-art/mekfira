@@ -3,44 +3,81 @@ const sendNotificationEmail = require('../services/nodemailerService');
 const { Op } = require('sequelize');
 const Office = require('../models/officeModel'); // Office model for reference
 
-// Controller to add a rental
 const addRental = async (req, res, next) => {
   const { renter, rentedOfficeId, rentalStartDate, rentalEndDate } = req.body;
-  const { name, phone } = renter;
+  const { name, phone } = renter; // Use 'renter.name' and 'renter.phone'
+ 
+  const startDate = new Date(rentalStartDate);
+  const endDate = rentalEndDate ? new Date(rentalEndDate) : null; // End date can be null if not provided
+  
+  // Validate the input
+  if (!name || !phone || !rentedOfficeId || !rentalStartDate || !rentalEndDate) {
+    return res.status(400).json({ message: 'All required fields must be provided.' });
+  }
 
   try {
+    // Validate that rentalStartDate is before rentalEndDate
+    if (new Date(rentalStartDate) >= new Date(rentalEndDate)) {
+      return res.status(400).json({
+        message: 'Rental start date must be before the end date.',
+        details: 'The start date cannot be the same as or later than the end date.',
+      });
+    }
+
     // Check if the office exists
     const office = await Office.findByPk(rentedOfficeId);
     if (!office) {
-      return res.status(404).json({ message: 'Office not found' });
+      return res.status(404).json({
+        message: 'Office not found.',
+        details: `No office with ID ${rentedOfficeId} exists.`,
+      });
     }
 
     // Check if the office is already rented
-    const existingRental = await Rental.findOne({
-      where: {
-        rentedOfficeId: rentedOfficeId,
-        rentalEndDate: { [Op.gt]: new Date() }, // Ensure the rental period is still active
-      },
-    });
-
+    const existingRental = await Rental.findOne({ where: { rentedOfficeId } });
     if (existingRental) {
-      return res.status(400).json({ message: 'This office is already rented.' });
+      return res.status(400).json({
+        message: 'This office is already rented.',
+        details: `The office with ID ${rentedOfficeId} is already rented.`,
+      });
     }
 
-    // Create a new rental record
+    // Create the rental record
     const rental = await Rental.create({
-      tenantName: name,
-      phone: phone,
-      rentedOfficeId: rentedOfficeId,
-      rentalStartDate: rentalStartDate,
-      rentalEndDate: rentalEndDate,
+      tenantName: name, 
+      phone,
+      rentedOfficeId,
+      rentalStartDate: startDate,
+      rentalEndDate: endDate, 
     });
 
-    res.status(201).json(rental);
+    res.status(201).json({
+      message: 'Rental created successfully.',
+      data: rental,
+    });
   } catch (error) {
-    next(error);
+    console.error('Error occurred in addRental:', {
+      message: error.message,
+      stack: error.stack,
+    });
+
+    // Handle specific Sequelize errors
+    if (error.name === 'SequelizeValidationError') {
+      return res.status(400).json({
+        message: 'Validation error occurred.',
+        details: error.errors.map((e) => e.message),
+      });
+    }
+
+    // If it's a server error or unknown error
+    return res.status(500).json({
+      message: 'An unexpected error occurred.',
+      details: error.message,
+    });
   }
 };
+
+
 
 
 // Controller to get all rentals

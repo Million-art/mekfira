@@ -57,7 +57,7 @@ const RenterPage: React.FC<UserPageProps> = ({ activeSection }) => {
     }
 
     return (
-        <div className="p-6">
+        <div className="">
             <h1 className="text-3xl font-bold mb-6">Tenants Management</h1>
             <p className="mb-4">There are <b>{rentals.length}</b> tenants</p>
             {/* Render RentalList component to display the users */}

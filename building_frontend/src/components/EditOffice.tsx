@@ -52,19 +52,7 @@ const EditOffice: React.FC<EditOfficeProps> = ({ office, onCancel, onOfficeUpdat
           required
         />
       </div>
-
-      <div className="mt-2">
-        <label htmlFor="price" className="block text-sm font-medium mb-1">Price</label>
-        <input
-          type="number"
-          name="price"
-          id="price"
-          value={formData.price}
-          onChange={handleChange}
-          className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-      </div>
+   
 
       <div className="mt-2">
         <label htmlFor="floorNo" className="block text-sm font-medium mb-1">Floor Number</label>

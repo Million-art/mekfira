@@ -73,7 +73,9 @@ const OfficePage: React.FC<OfficePageProps> = ({ activeSection }) => {
   };
 
   return (
-    <div className="p-6">
+    <div className="">
+
+      
       <h1 className="text-3xl font-bold mb-6">Office Management</h1>
 
       {/* Status Filter */}

@@ -28,11 +28,11 @@ app.use(
 app.use(express.json()); // Parse JSON bodies (for API requests)
 
 app.use(cookieParser()); // Middleware for parsing cookies
-app.use(
-  morgan("combined", {
-    stream: { write: (message) => logger.info(message.trim()) },
-  })
-); // Logger middleware
+// app.use(
+//   morgan("combined", {
+//     stream: { write: (message) => logger.info(message.trim()) },
+//   })
+// ); // Logger middleware
 
 // Routes
 app.use("/api/offices", officeRoutes); // Office routes (fixed)

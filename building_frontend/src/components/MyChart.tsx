@@ -57,7 +57,7 @@ export default function MyChart() {
   return (
     <div className='flex flex-col h-[100%]'>
     <Piechart />
-      <ResponsiveContainer width="100%"  className='flex flex-auto  ' >
+      {/* <ResponsiveContainer width="100%"  className='flex flex-auto  ' >
         <BarChart data={data}>
           <XAxis
             dataKey="month"
@@ -82,7 +82,7 @@ export default function MyChart() {
             barSize={30}
           />
         </BarChart>
-      </ResponsiveContainer>
+      </ResponsiveContainer> */}
     </div>
   );
 }

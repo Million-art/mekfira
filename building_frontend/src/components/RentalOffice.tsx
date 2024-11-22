@@ -7,14 +7,14 @@ import fetchOffices from '@/utils/helpers/fetchOffices';
 import axios from 'axios';
 
 interface RentOfficeProps {
-    activeSection:ActiveSection
+    activeSection: ActiveSection;
 }
 
 const RentOffice: React.FC<RentOfficeProps> = ({ activeSection }) => {
     const [offices, setOffices] = useState<Office[]>([]); // Initial state for offices
 
     const [renter, setRenter] = useState({
-        renterId: '', 
+        renterId: '',
         name: '',
         phone: '',
     });
@@ -36,26 +36,26 @@ const RentOffice: React.FC<RentOfficeProps> = ({ activeSection }) => {
     });
 
     const [loading, setLoading] = useState<boolean>(false);
+
     useEffect(() => {
         const fetchData = async () => {
-          try {
-            await fetchOffices({ setOffices, activeSection });
-           console.log('Offices data:', offices);  // Log offices after state is updated
-        } catch (error) {
-            console.error('Error fetching offices:', error);
-          }
+            try {
+                await fetchOffices({ setOffices, activeSection });
+                console.log('Offices data:', offices); // Log offices after state is updated
+            } catch (error) {
+                console.error('Error fetching offices:', error);
+            }
         };
-      
+
         fetchData();
-      }, [activeSection]);
-      
+    }, [activeSection]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setRentalDetails((prevDetails) => {
             if (name === 'rentedOfficeId') {
                 // Update office details when office is selected
-                const selectedOffice = offices.find(office => office.officeId === value);
+                const selectedOffice = offices.find((office) => office.officeId === value);
                 if (selectedOffice) {
                     return {
                         ...prevDetails,
@@ -89,7 +89,7 @@ const RentOffice: React.FC<RentOfficeProps> = ({ activeSection }) => {
 
     const validate = (): RentOfficeError => {
         const validationErrors: RentOfficeError = {
-             rentedOfficeId: '',
+            rentedOfficeId: '',
             rentalStartDate: '',
             rentalEndDate: '',
         };
@@ -117,16 +117,17 @@ const RentOffice: React.FC<RentOfficeProps> = ({ activeSection }) => {
             setErrors(validationErrors);
             return;
         }
-    
+
         setLoading(true);
         try {
+            console.log('Loading', rentalDetails);
             // Simulate API call and send rentalDetails as payload
             const response = await api.post('api/rentals/add', rentalDetails);
-    
+
             if (response.status === 201) {
-                 toast.success('Office rented successfully!');
+                toast.success('Office rented successfully!');
                 setRentalDetails({
-                    renter: { renterId: '', name: '', phone: '' },
+                    renter: { name: '', phone: '' },
                     rentedOfficeId: '',
                     rentedOfficeNo: '',
                     rentedFloorNo: 0,
@@ -147,13 +148,19 @@ const RentOffice: React.FC<RentOfficeProps> = ({ activeSection }) => {
             // Handle specific API errors based on the response error
             if (axios.isAxiosError(error)) {
                 const { status, data } = error.response || {};
-    
+
                 if (status === 400 && data.message === 'This office is already rented.') {
                     toast.error('This office is already rented.');
+                } else if (status === 400 && data.message === 'Invalid date range.') {
+                    toast.error('Rental start date must be earlier than the end date.');
                 } else if (status === 404) {
                     toast.error('Office not found.');
                 } else if (status === 500) {
                     toast.error('Server error. Please try again later.');
+                } else if (status === 401) {
+                    toast.error('Unauthorized. Please login.');
+                } else if (status === 403) {
+                    toast.error('You do not have permission to rent this office.');
                 } else {
                     toast.error('An error occurred. Please try again.');
                 }
@@ -168,16 +175,17 @@ const RentOffice: React.FC<RentOfficeProps> = ({ activeSection }) => {
             setLoading(false);
         }
     };
-    
 
     return (
         <div>
-            <h1 className='text-3xl font-bold mb-6'>Rent Office</h1>
+            <h1 className="text-3xl font-bold mb-6">Rent Office</h1>
             <form onSubmit={handleSubmit} className="mb-6">
                 {/* Office Selection */}
                 {errors.rentedOfficeId && <p className="text-red-500">{errors.rentedOfficeId}</p>}
                 <div className="mb-4">
-                    <label htmlFor="rentedOfficeId" className="block text-sm font-medium text-gray-700">Select Office</label>
+                    <label htmlFor="rentedOfficeId" className="block text-sm font-medium text-gray-700">
+                        Select Office
+                    </label>
                     <select
                         name="rentedOfficeId"
                         value={rentalDetails.rentedOfficeId}
@@ -185,18 +193,22 @@ const RentOffice: React.FC<RentOfficeProps> = ({ activeSection }) => {
                         className={`border p-2 w-full ${errors.rentedOfficeId ? 'border-red-500' : ''}`}
                     >
                         <option value="">Select an office</option>
-                        {offices.filter(office => office.status === 'Available').map((office) => (
-                            <option key={office.officeId} value={office.officeId}>
-                                {office.officeNo} - Floor {office.floorNo}
-                            </option>
-                        ))}
+                        {offices
+                            .filter((office) => office.status === 'Available')
+                            .map((office) => (
+                                <option key={office.officeId} value={office.officeId}>
+                                    {office.officeNo} - Floor {office.floorNo}
+                                </option>
+                            ))}
                     </select>
                 </div>
 
                 {/* Renter Name */}
                 {errors.renter?.name && <p className="text-red-500">{errors.renter?.name}</p>}
                 <div className="mb-4">
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">Renter Name</label>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                        Renter Name
+                    </label>
                     <input
                         name="name"
                         type="text"
@@ -209,7 +221,9 @@ const RentOffice: React.FC<RentOfficeProps> = ({ activeSection }) => {
                 {/* Renter Phone */}
                 {errors.renter?.phone && <p className="text-red-500">{errors.renter?.phone}</p>}
                 <div className="mb-4">
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                        Phone Number
+                    </label>
                     <input
                         name="phone"
                         type="tel"
@@ -222,7 +236,9 @@ const RentOffice: React.FC<RentOfficeProps> = ({ activeSection }) => {
                 {/* Rental Start Date */}
                 {errors.rentalStartDate && <p className="text-red-500">{errors.rentalStartDate}</p>}
                 <div className="mb-4">
-                    <label htmlFor="rentalStartDate" className="block text-sm font-medium text-gray-700">Rental Start Date</label>
+                    <label htmlFor="rentalStartDate" className="block text-sm font-medium text-gray-700">
+                        Rental Start Date
+                    </label>
                     <input
                         name="rentalStartDate"
                         type="date"
@@ -235,7 +251,9 @@ const RentOffice: React.FC<RentOfficeProps> = ({ activeSection }) => {
                 {/* Rental End Date */}
                 {errors.rentalEndDate && <p className="text-red-500">{errors.rentalEndDate}</p>}
                 <div className="mb-4">
-                    <label htmlFor="rentalEndDate" className="block text-sm font-medium text-gray-700">Rental End Date</label>
+                    <label htmlFor="rentalEndDate" className="block text-sm font-medium text-gray-700">
+                        Rental End Date
+                    </label>
                     <input
                         name="rentalEndDate"
                         type="date"
@@ -245,13 +263,15 @@ const RentOffice: React.FC<RentOfficeProps> = ({ activeSection }) => {
                     />
                 </div>
 
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className={`bg-blue-500 text-white p-2 rounded ${loading ? 'opacity-50' : ''}`}
-                >
-                    {loading ? 'Submitting...' : 'Submit'}
-                </button>
+                <div className="flex justify-end">
+                    <button
+                        type="submit"
+                        className={`bg-blue-500 text-white p-2 rounded ${loading ? 'opacity-50' : ''}`}
+                        disabled={loading}
+                    >
+                        {loading ? 'Processing...' : 'Submit'}
+                    </button>
+                </div>
             </form>
             <ToastContainer />
         </div>

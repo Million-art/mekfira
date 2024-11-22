@@ -25,7 +25,7 @@ export type OfficeError = {
 
 // Define the structure for a user
 export interface Renter {
-    renterId: string; // Unique identifier for the renter
+    renterId?: string; // Unique identifier for the renter
     name: string;     // Name of the renter
     phone: string;    // Contact number of the renter
 }

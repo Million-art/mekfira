@@ -5,6 +5,7 @@ import { DashboardProps } from "../type"; // Adjust the path based on your proje
 import MyChart from "./MyChart";
 import UserPage from "./RenterPage";
 import RentOffice from "./RentalOffice";
+import Analytics from "./Analytics";
 
 const Dashboard: React.FC<DashboardProps> = ({ activeSection }) => {
 
@@ -12,8 +13,9 @@ const Dashboard: React.FC<DashboardProps> = ({ activeSection }) => {
     <div className="p-6 flex-1 overflow-y-auto">
       {/* Render chart if the active section is 'dashboard' */}
       {activeSection === "dashboard" && (
-        <div className="h-[100%]">
+        <div className="h-[100%]  md:flex">
           <MyChart />
+          <Analytics />
         </div>
       )}
 
