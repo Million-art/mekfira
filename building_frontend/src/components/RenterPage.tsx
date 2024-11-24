@@ -21,7 +21,10 @@ const RenterPage: React.FC<UserPageProps> = ({ activeSection }) => {
     }, [activeSection]);
 
     // Function to extend the contract
-    const extendContract = (rentalId: string, newEndDate: string) => {
+    const extendContract = async (rentalId: string, newEndDate: string) => {
+        console.log(`extending ${rentalId} to ${newEndDate} `);
+         await api.patch(`api/rentals/${rentalId}`, { rentalEndDate: newEndDate });
+
         setRentals(prevRentals =>
             prevRentals.map(rental =>
                 rental.rentalId === rentalId

@@ -1,8 +1,9 @@
+import { BaseUrl } from '@/constant/baseUrl';
 import axios from 'axios';
 import { toast } from 'react-toastify'; // For toast notifications
 
 const api = axios.create({
-  baseURL: 'https://mekfirabackend.dirtechsolution.com',
+  baseURL:  BaseUrl,
   withCredentials: true,  // Important for sending cookies
 });
  

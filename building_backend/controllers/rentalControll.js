@@ -127,7 +127,7 @@ const updateRental = async (req, res, next) => {
   const rentalData = req.body;
 
   try {
-    const [updated] = await Rental.update(rentalData, { where: { renterId: id } });
+    const [updated] = await Rental.update(rentalData, { where: { rentalId: id } });
 
     if (updated) {
       const updatedRental = await Rental.findByPk(id);
