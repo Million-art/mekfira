@@ -18,7 +18,7 @@ api.interceptors.response.use(
 
       try {
         // Call the accessTokenGenerator endpoint to refresh the token
-        const refreshResponse = await axios.post('http://localhost:3001/api/admin/refresh', {}, { withCredentials: true });
+        const refreshResponse = await axios.post('http://mekfirabackend.dirtechsolution.com/api/admin/refresh', {}, { withCredentials: true });
         // If the refresh was successful, update the Authorization header and retry the request
         const newAccessToken = refreshResponse.data.accesstoken;
         axios.defaults.headers['Authorization'] = `Bearer ${newAccessToken}`;
