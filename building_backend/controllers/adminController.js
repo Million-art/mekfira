@@ -59,7 +59,7 @@ const adminController = {
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { email, password } = req.body;
+        const { email, role, password } = req.body;
         if (!password) {
             return res.status(400).json({ message: "Password is required" });
         }
@@ -77,6 +77,7 @@ const adminController = {
             // Create the new admin
             const newAdmin = await Admin.create({
                 email,
+                role,
                 password: hashedPassword,
             });
 
@@ -106,8 +107,8 @@ const adminController = {
             }
 
             // Generate tokens using different secrets for added security
-            const accessToken = jwt.sign({ id: admin.id, email: admin.email }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
-            const refreshToken = jwt.sign({ id: admin.id, email: admin.email }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+            const accessToken = jwt.sign({ id: admin.id, role: admin.role, email: admin.email }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
+            const refreshToken = jwt.sign({ id: admin.id, role: admin.role, email: admin.email }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
 
  
             await admin.save();

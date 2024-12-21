@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const officeRoutes = require("./routes/officeRoute"); // Import officeRoutes
 const adminRoutes = require("./routes/adminRoute");
 const rentalRoutes = require("./routes/rentalRoutes");
+const authRoutes = require("./routes/authRoute");
 const errorHandler = require("./middlewares/errorHandler");
 const sequelize = require("./database/connection");
 const morgan = require("morgan");
@@ -35,6 +36,7 @@ app.use(
 ); // Logger middleware
 
 // Routes
+app.use("/api/auth", authRoutes);
 app.use("/api/offices", officeRoutes); // Office routes (fixed)
 app.use("/api/admin/",  adminRoutes); // Admin routes
 app.use("/api/rentals/", rentalRoutes);

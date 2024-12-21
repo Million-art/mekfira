@@ -16,6 +16,19 @@ const Admin = sequelize.define('Admin', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    role: {
+        type: DataTypes.ENUM('superAdmin', 'admin'),
+        allowNull: false,
+        defaultValue: 'admin',
+    },
+    resetToken: {
+        type: DataTypes.STRING,
+        allowNull: true,  // Token is optional initially
+    },
+    resetTokenExpiry: {
+        type: DataTypes.DATE,
+        allowNull: true,  // Expiry is optional initially
+    },
 }, {
     tableName: 'admins',
     timestamps: true,

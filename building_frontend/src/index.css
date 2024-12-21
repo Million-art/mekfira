@@ -75,4 +75,21 @@
   }
 }
 
- 
+ /* Add this to your CSS or Tailwind styles if using a custom loader */
+.loader {
+  border: 4px solid #e5e7eb; /* Light gray */
+  border-top: 4px solid #3b82f6; /* Blue */
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+      transform: rotate(0deg);
+  }
+  to {
+      transform: rotate(360deg);
+  }
+}

@@ -1,11 +1,11 @@
 import React from "react";
-import OfficeForm from "./OfficeForm";
-import OfficePage from "./OfficePage";
-import { DashboardProps } from "../type"; // Adjust the path based on your project structure
+import OfficeForm from "../components/OfficeForm";
+import OfficePage from "../components/OfficePage";
+import { DashboardProps } from "../type";
 // import MyChart from "./MyChart";
-import UserPage from "./RenterPage";
-import RentOffice from "./RentalOffice";
-import Analytics from "./Analytics";
+import UserPage from "../components/RenterPage";
+import RentOffice from "../components/RentalOffice";
+import Analytics from "../components/Analytics";
 
 const Dashboard: React.FC<DashboardProps> = ({ activeSection }) => {
 

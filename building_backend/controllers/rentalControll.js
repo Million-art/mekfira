@@ -1,5 +1,5 @@
 const Rental = require('../models/rentalModel');
-const sendNotificationEmail = require('../services/nodemailerService');
+// const sendNotificationEmail = require('../services/nodemailerService');
 const { Op } = require('sequelize');
 const Office = require('../models/officeModel'); // Office model for reference
 
@@ -183,7 +183,7 @@ const notifyRentalsEndingSoon = async (req, res, next) => {
       for (const rental of rentals) {
         try {
           // Send the notification email for each rental ending soon
-          await sendNotificationEmail(rental.renterEmail, rental.rentedOffice.officeName, rental.endDate);
+          // await sendNotificationEmail(rental.renterEmail, rental.rentedOffice.officeName, rental.endDate);
         } catch (emailError) {
           console.error(`Failed to send email to tenant for rental ${rental.renterId}:`, emailError);
           // Optional: log specific error for email failure if needed

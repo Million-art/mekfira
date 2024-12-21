@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/connection');
-const Admin = require('./adminModel'); // Ensure Admin model is imported
+const Admin = require('./adminModel') 
 
 const Office = sequelize.define('Office', {
     officeId: {

@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from './AuthContext'; // Adjust the import path if necessary
+import Loading from './Loading';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { isAuthenticated, isLoading } = useAuth();
   
     useEffect(() => {
-        console.log("Is Authenticated:", isAuthenticated); // Log when the state changes
+        console.log("Is Authenticated:", isAuthenticated); 
     }, [isAuthenticated]); 
 
     if (isLoading) {
-        return <div>Loading...</div>; // Show loading indicator until authentication check completes
+        return  <Loading />
     }
 
     return isAuthenticated ? (
